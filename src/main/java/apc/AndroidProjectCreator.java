@@ -17,6 +17,8 @@
 package apc;
 
 import enumeration.Action;
+import enumeration.DecompilerType;
+
 /**
  * This class serves as a front for a possible GUI. The 'ArgumentManager' class
  * contains all functions.
@@ -40,12 +42,44 @@ public class AndroidProjectCreator {
          *
          * MacOS: install Java 8 JRE, Java 8 JDK and use brew to install maven
          */
+        boolean debugging = false;
+        if (debugging) {
+            decompileTest(DecompilerType.CFR);
+            System.exit(0);
+        }
+
         ArgumentManager manager = new ArgumentManager();
         //Show the version information
         manager.showVersion();
         //Set the action, if there is an error, the Action.ERROR value is provided. This is all handled within the setArguments function
         Action action = manager.setArguments(args);
+        //If incorrect or unknown parameters are provided, APC provides feedback to the user and then terminates.
+        if (action == Action.ERROR) {
+            //Obtain the provided arguments in a String-object for later use
+            String arguments = "";
+            for (int i = 0; i < args.length; i++) {
+                arguments += args[i] + " ";
+            }
+            System.out.println("[+]The provided input has not been recognised by AndroidProjectCreator. Below is the information you've provided. \n   Afterwards, the correct usage information is given below for an easy comparison.");
+            System.out.println("\t" + arguments);
+            System.out.println("");
+            manager.showUsage();
+            //Close APC with the 'unsuccessful' message, hence the '1' as parameter, instead of 0
+            System.exit(1);
+        }
         //Executes the action based on the return value of the setArguments function
+        manager.executeAction(action);
+    }
+
+    private static void decompileTest(DecompilerType decompiler) {
+        ArgumentManager manager = new ArgumentManager();
+        manager.showVersion();
+        String[] arg = new String[4];
+        arg[0] = "-decompile";
+        arg[1] = decompiler.toString().toLowerCase();
+        arg[2] = "/Users/_taste/Desktop/secchating.apk";
+        arg[3] = "./procyon-test";
+        Action action = manager.setArguments(arg);
         manager.executeAction(action);
     }
 }

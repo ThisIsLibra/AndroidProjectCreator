@@ -16,6 +16,7 @@
  */
 package library;
 
+import enumeration.DecompilerType;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,10 +40,12 @@ public class Repositories {
         List<Repository> repositories = new ArrayList<>();
         repositories.add(getAndroidProject());
         repositories.add(getApkTool());
+        repositories.add(getCfr());
         repositories.add(getDex2Jar());
         repositories.add(getFernflower());
         repositories.add(getJadX());
         repositories.add(getJdCmd());
+        repositories.add(getProcyon());
         return repositories;
     }
 
@@ -53,7 +56,7 @@ public class Repositories {
      */
     public static Repository getDex2Jar() {
         //Set the information for the repository
-        String name = "dex2jar";
+        String name = DecompilerType.DEX2JAR.toString().toLowerCase();
         String url = "https://github.com/pxb1988/dex2jar.git";
         File directory = new File(Constants.DEX2JAR_REPOSITORY_FOLDER);
         String branch = "2.x";
@@ -67,7 +70,7 @@ public class Repositories {
      */
     public static Repository getJadX() {
         //Set the information for the repository
-        String name = "jadx";
+        String name = DecompilerType.JADX.toString().toLowerCase();
         String url = "https://github.com/skylot/jadx.git";
         File directory = new File(Constants.JADX_REPOSITORY_FOLDER);
         String branch = "master";
@@ -81,7 +84,7 @@ public class Repositories {
      * @return the JD-CMD repository
      */
     public static Repository getJdCmd() {
-        String name = "jdcmd";
+        String name = DecompilerType.JDCMD.toString().toLowerCase();
         String url = "https://github.com/kwart/jd-cmd.git";
         File directory = new File(Constants.JDCMD_REPOSITORY_FOLDER);
         String branch = "master";
@@ -94,7 +97,7 @@ public class Repositories {
      * @return the Fernflower repository
      */
     public static Repository getFernflower() {
-        String name = "fernflower";
+        String name = DecompilerType.FERNFLOWER.toString().toLowerCase();
         String url = "https://github.com/fesh0r/fernflower.git";
         File directory = new File(Constants.FERNFLOWER_REPOSITORY_FOLDER);
         String branch = "master";
@@ -107,7 +110,7 @@ public class Repositories {
      * @return the APKTool repository
      */
     public static Repository getApkTool() {
-        String name = "apktool";
+        String name = DecompilerType.APKTOOL.toString().toLowerCase();
         String url = "https://github.com/iBotPeaches/Apktool.git";
         File directory = new File(Constants.APKTOOL_REPOSITORY_FOLDER);
         String branch = "master";
@@ -124,6 +127,32 @@ public class Repositories {
         String url = "https://github.com/ThisIsLibra/AndroidStudioProject.git";
         File directory = new File(Constants.ANDROIDPROJECT_REPOSITORY_FOLDER);
         String branch = "master";
+        return new Repository(name, url, directory, branch);
+    }
+
+    /**
+     * Get the pre-built CFR decompiler
+     *
+     * @return the pre-built CFR decompiler
+     */
+    public static Repository getCfr() {
+        String name = DecompilerType.CFR.toString().toLowerCase();
+        String url = "https://github.com/ThisIsLibra/cfr-decompiler.git";
+        File directory = new File(Constants.CFR_REPOSITORY_FOLDER);
+        String branch = "apc-1.1";
+        return new Repository(name, url, directory, branch);
+    }
+
+    /**
+     * Get the pre-built Procyon decompiler
+     *
+     * @return the pre-built Procyon decompiler
+     */
+    public static Repository getProcyon() {
+        String name = DecompilerType.PROCYON.toString().toLowerCase();
+        String url = "https://github.com/ThisIsLibra/procyon-decompiler.git";
+        File directory = new File(Constants.PROCYON_REPOSITORY_FOLDER);
+        String branch = "apc-1.1";
         return new Repository(name, url, directory, branch);
     }
 }
