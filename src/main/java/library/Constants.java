@@ -78,6 +78,12 @@ public class Constants {
     public static final String TEMP_LIBRARY_FOLDER = LIBRARY_FOLDER + "/temp" + "/" + UUID.randomUUID().toString();
 
     /**
+     * The location of JAR, which was created by convertingthe classes.dex with
+     * Dex2Jar and placed within the temporary library folder.
+     */
+    public static final String TEMP_CONVERTED_JAR = TEMP_LIBRARY_FOLDER + "/output.jar";
+
+    /**
      * The location of the template project, which is used until the assembly
      * process is completed. After that, it is copied to the user-specified
      * output location and deleted
@@ -106,9 +112,21 @@ public class Constants {
     public static final String TEMP_TEMPLATE_RESOURCES_FOLDER = TEMP_TEMPLATE_APP_SOURCE_MAIN_FOLDER + "/res";
 
     /**
+     * The location of the assets within the resources folder of the template
+     * project
+     */
+    public static final String TEMP_TEMPLATE_ASSET_FOLDER = TEMP_TEMPLATE_RESOURCES_FOLDER + "/assets";
+
+    /**
+     * The location of the SMALI folder within the resources folder of the
+     * template project
+     */
+    public static final String TEMP_TEMPLATE_SMALI_FOLDER = TEMP_TEMPLATE_RESOURCES_FOLDER + "/smali";
+
+    /**
      * The location of the libraries within the template project
      */
-    public static final String TEMP_TEMPLATE_LIBS_FOLDER = TEMP_TEMPLATE_FOLDER + "/app/libs";
+    public static final String TEMP_TEMPLATE_LIBS_FOLDER = TEMP_TEMPLATE_RESOURCES_FOLDER + "/libraries";
 
     /**
      * The temporary folder used to store the decompiled source code
@@ -130,6 +148,15 @@ public class Constants {
      */
     public static final String TEMP_LIB_FOLDER = TEMP_LIBRARY_FOLDER + "/apktool/lib";
 
+    /**
+     * The location of the Smali files in the temporary folder
+     */
+    public static final String TEMP_SMALI_FOLDER = TEMP_LIBRARY_FOLDER + "/apktool-smali/smali";
+
+    /**
+     * The location of the assets in the temporary folder
+     */
+    public static final String TEMP_ASSET_FOLDER = TEMP_LIBRARY_FOLDER + "/apktool/assets";
     /**
      * The location of APKTool within the library
      */
@@ -160,6 +187,15 @@ public class Constants {
      */
     public static final String ANDROIDPROJECT_LIBRARY_FOLDER = LIBRARY_FOLDER + "/androidproject";
 
+    /**
+     * The location of CFR within the library
+     */
+    public static final String CFR_LIBRARY_FOLDER = LIBRARY_FOLDER + "/cfr";
+
+    /**
+     * The location of Procyon within the library
+     */
+    public static final String PROCYON_LIBRARY_FOLDER = LIBRARY_FOLDER + "/procyon";
     /**
      * The repository folder contains all cloned repositories during the
      * installation
@@ -196,4 +232,13 @@ public class Constants {
      */
     public static final String ANDROIDPROJECT_REPOSITORY_FOLDER = REPOSITORY_FOLDER + "/androidproject";
 
+    /**
+     * The location of the pre-built CFR decompiler repository on the disk
+     */
+    public static final String CFR_REPOSITORY_FOLDER = REPOSITORY_FOLDER + "/cfr";
+
+    /**
+     * The location of the pre-built ProCyon decompiler on the disk
+     */
+    public static final String PROCYON_REPOSITORY_FOLDER = REPOSITORY_FOLDER + "/procyon";
 }

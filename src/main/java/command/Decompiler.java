@@ -78,6 +78,10 @@ public class Decompiler {
          * close as possible to original ones, but prevents the ability to
          * rebuild. This is irrelevant for APC users, since the decompiled Java
          * code isn't buildable in most cases
+         *
+         * The '-k' command allows broken resources to be decoded although the
+         * project will then not be compilable. This is not a problem, since the
+         * output of APC isn't fully buildable anyway.
          */
         System.out.println("[+]Calling APKTool to decompile the AndroidManifest.xml and the application resources");
         if (isWindows) {
@@ -86,12 +90,34 @@ public class Decompiler {
             command = "java -jar ./apktool-cli-all.jar";
         }
         //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-        command += " d -f -s -m -o " + new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath() + "/apktool" + " " + apk.getAbsolutePath();
+        command += " d -f -s -m -k -o " + new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath() + "/apktool" + " " + apk.getAbsolutePath();
 
         workingDirectory = new File(Constants.APKTOOL_LIBRARY_FOLDER);
         executeCommand(DecompilerType.APKTOOL, command, workingDirectory);
 
-        //TODO also copy smali folder to the asset folder (like the classes.dex)
+        /**
+         * Use APKTool again for the SMALI files, cant be done at once because
+         * one either gets the 'classes.dex' file or the .smali files
+         *
+         * The flag '--no-assets' avoids the decoding of assets in the APK,
+         * which are already extracted in the previous call of APKTool.
+         *
+         * The '--no-res' avoids the decoding of resources, which is also done in the
+         * previous call of APKTool.
+         *
+         */
+        System.out.println("[+]Calling APKTool to obtain the SMALI code");
+        if (isWindows) {
+            command = "java -jar apktool-cli-all.jar";
+        } else {
+            command = "java -jar ./apktool-cli-all.jar";
+        }
+        //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
+        command += " d -f --no-assets --no-res -m -o " + new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath() + "/apktool-smali" + " " + apk.getAbsolutePath();
+
+        workingDirectory = new File(Constants.APKTOOL_LIBRARY_FOLDER);
+        executeCommand(DecompilerType.APKTOOL, command, workingDirectory);
+
         //TODO before the combine functionality is added, add a temporary "copy all classes[n].dex files to the template project's assets folder" method
         //TODO Combine classes[N].dex files into classes.dex to decompile every part of the binary, should be optional since it can exceed 64k functions. Use /Users/[name]/Library/Android/sdk/build-tools/28.0.2/lib/dx.jar com.android.dx.merge.DexMerger output.dex part1.dex part2.dex
         //Source for code: https://stackoverflow.com/questions/11257378/is-there-a-way-to-merge-two-or-more-dex-files-into-one-dex-file-using-scala
@@ -114,7 +140,7 @@ public class Decompiler {
             command = "sh ./d2j-dex2jar.sh";
         }
         //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-        command += " -n -f -o " + new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath() + "/output.jar " + new File(Constants.TEMP_LIBRARY_FOLDER + "/apktool/classes.dex").getAbsolutePath();
+        command += " -n -f -o " + new File(Constants.TEMP_CONVERTED_JAR) + " " + new File(Constants.TEMP_LIBRARY_FOLDER + "/apktool/classes.dex").getAbsolutePath();
         workingDirectory = new File(Constants.DEX2JAR_LIBRARY_FOLDER);
         executeCommand(DecompilerType.DEX2JAR, command, workingDirectory);
 
@@ -132,7 +158,7 @@ public class Decompiler {
                     command = "java -jar ./fernflower.jar";
                 }
                 //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-                command += " " + new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath() + "/output.jar" + " " + new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath();
+                command += " " + new File(Constants.TEMP_CONVERTED_JAR) + " " + new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath();
                 workingDirectory = new File(Constants.FERNFLOWER_LIBRARY_FOLDER);
                 break;
             case JADX:
@@ -157,7 +183,7 @@ public class Decompiler {
                     command = "sh ./jadx";
                 }
                 //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-                command += " -r --escape-unicode -d " + new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath() + " " + new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath() + "/output.jar";
+                command += " -r --escape-unicode -d " + new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath() + " " + new File(Constants.TEMP_CONVERTED_JAR);
                 workingDirectory = new File(Constants.JADX_LIBRARY_FOLDER);
                 break;
             case JDCMD:
@@ -171,8 +197,43 @@ public class Decompiler {
                     command = "java -jar ./jd-cli.jar";
                 }
                 //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-                command += " -od " + new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath() + " " + new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath() + "/output.jar";
+                command += " -od " + new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath() + " " + new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath();
                 workingDirectory = new File(Constants.JDCMD_LIBRARY_FOLDER);
+                break;
+            case CFR:
+                /**
+                 * --outputdir [the output directory]
+                 *
+                 * --aexagg true To remove nested exception handles which have
+                 * the same semantics
+                 *
+                 */
+                if (isWindows) {
+                    command = "java -jar cfr-0.138.jar";
+                } else {
+                    command = "java -jar ./cfr-0.138.jar";
+                }
+                //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
+                command += " --aexagg true --outputdir " + new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath() + " " + new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath();
+                workingDirectory = new File(Constants.CFR_LIBRARY_FOLDER);
+                break;
+            case PROCYON:
+                /**
+                 * -ci collapses multiple imports from the same package into a
+                 * wildcard import
+                 *
+                 * -eml for eager loading
+                 *
+                 * -o [dir] for output
+                 */
+                if (isWindows) {
+                    command = "java -jar procyon-decompiler-0.5.30.jar";
+                } else {
+                    command = "java -jar ./procyon-decompiler-0.5.30.jar";
+                }
+                //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
+                command += " -ci -eml --jar-file " + new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath() + " -o " + new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath();
+                workingDirectory = new File(Constants.PROCYON_LIBRARY_FOLDER);
                 break;
         }
         executeCommand(decompiler, command, workingDirectory);

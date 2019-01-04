@@ -23,8 +23,10 @@ package enumeration;
  */
 public enum DecompilerType {
     APKTOOL,
+    CFR,
     DEX2JAR,
     FERNFLOWER,
     JADX,
-    JDCMD
+    JDCMD,
+    PROCYON
 }

@@ -16,6 +16,7 @@
  */
 package apc;
 
+import enumeration.DecompilerType;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -94,7 +95,9 @@ public class RepositoryManager {
     public void buildRepositories(List<Tool> tools) throws IOException, InterruptedException {
         for (Tool tool : tools) {
             try {
-                if (tool.getRepository().getName().equals("androidstudioproject")) {
+                if (tool.getRepository().getName().equalsIgnoreCase("androidstudioproject")
+                        || tool.getRepository().getName().equalsIgnoreCase(DecompilerType.CFR.toString())
+                        || tool.getRepository().getName().equalsIgnoreCase(DecompilerType.PROCYON.toString())) {
                     continue;
                 }
                 System.out.println("[+]Starting to build " + tool.getRepository().getName());
@@ -116,9 +119,15 @@ public class RepositoryManager {
     public void extractBuilds(List<Tool> tools) throws IOException {
         for (Tool tool : tools) {
             try {
-                //Since the Android Studio Project repository only consists of a single ZIP archive, it does not need to be extracted. This is only done during decompilation.
+                //Since the Android Studio Project repository, CFR mirror and Procyon mirror only consist of a single file, it does not need to be extracted.
                 if (tool.getRepository().getName().equalsIgnoreCase("androidstudioproject")) {
                     fileManager.copyFolder(new File(Constants.ANDROIDPROJECT_REPOSITORY_FOLDER), new File(Constants.ANDROIDPROJECT_LIBRARY_FOLDER));
+                    continue;
+                } else if (tool.getRepository().getName().equalsIgnoreCase(DecompilerType.CFR.toString())) {
+                    fileManager.copyFolder(new File(Constants.CFR_REPOSITORY_FOLDER), new File(Constants.CFR_LIBRARY_FOLDER));
+                    continue;
+                } else if (tool.getRepository().getName().equalsIgnoreCase(DecompilerType.PROCYON.toString())) {
+                    fileManager.copyFolder(new File(Constants.PROCYON_REPOSITORY_FOLDER), new File(Constants.PROCYON_LIBRARY_FOLDER));
                     continue;
                 }
                 System.out.println("[+]Extracting " + tool.getRepository().getName());
@@ -133,7 +142,7 @@ public class RepositoryManager {
                         outputLocation.mkdir();
                         fileManager.extractArchive(currentFile.getAbsolutePath(), outputLocation.getAbsolutePath());
                         //Copy extracted files to the lib folder, where only the builds reside
-                        if (tool.getRepository().getName().equalsIgnoreCase("dex2jar")) {
+                        if (tool.getRepository().getName().equalsIgnoreCase(DecompilerType.DEX2JAR.toString())) {
                             fileManager.copyFolder(outputLocation.listFiles()[0], new File(Constants.DEX2JAR_LIBRARY_FOLDER));
                         } else {
                             fileManager.copyFolder(outputLocation, new File(Constants.LIBRARY_FOLDER + "/" + tool.getRepository().getName()));;

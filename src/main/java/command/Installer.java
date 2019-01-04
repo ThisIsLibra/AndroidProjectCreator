@@ -132,6 +132,8 @@ public class Installer {
         //Since the JadX folder is set to the "bin" folder within the "jadx" folder, the last four characters need to be removed in order for the name-printing to work
         File jadxFolder = new File(new String(Constants.JADX_LIBRARY_FOLDER).substring(0, Constants.JADX_LIBRARY_FOLDER.length() - 4));
         File jdcmdFolder = new File(Constants.JDCMD_LIBRARY_FOLDER);
+        File crfFolder = new File(Constants.CFR_LIBRARY_FOLDER);
+        File procyonFolder = new File(Constants.PROCYON_LIBRARY_FOLDER);
 
         //Add all folders in a list
         List<File> folders = new ArrayList<>();
@@ -141,6 +143,8 @@ public class Installer {
         folders.add(fernflowerFolder);
         folders.add(jadxFolder);
         folders.add(jdcmdFolder);
+        folders.add(crfFolder);
+        folders.add(procyonFolder);
 
         //Check each of the folders in the folders list
         for (File folder : folders) {

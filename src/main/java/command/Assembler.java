@@ -78,6 +78,8 @@ public class Assembler {
         copyResources();
         copyJavaCode();
         copyNativeLibraries();
+        copySmaliFiles();
+        copyAssets();
         //Copy the template project from the temporary location to the desired output location
         copyTemplateToOutputFolder();
         //TODO ZIP template project to the desired output location (if the zip flag is used)
@@ -203,15 +205,64 @@ public class Assembler {
                 System.out.println("[+]Native libraries found!");
                 System.out.println("[+]Copying native lbraries to the template project");
                 File templateLibraryFolder = new File(Constants.TEMP_TEMPLATE_LIBS_FOLDER);
+                templateLibraryFolder.mkdir();
                 fileManager.copyFolder(apkLibraryFolder, templateLibraryFolder);
                 System.out.println("[+]Native libraries succesfully copied!");
                 return;
             }
             System.out.println("[+]No native libraries found, skipping this step.");
         } catch (IOException e) {
-            throw new IOException("Something went wrong when copying the native libraries from the APK to the template projec.t");
+            throw new IOException("Something went wrong when copying the native libraries from the APK to the template project.");
         }
 
+    }
+
+    /**
+     * Copy the SMALI files into the template project's resources folder
+     *
+     * @throws IOException when the copying fails
+     */
+    private void copySmaliFiles() throws IOException {
+        try {
+            System.out.println("[+]Looking for SMALI files");
+            File apkSmaliFolder = new File(Constants.TEMP_SMALI_FOLDER);
+            if (apkSmaliFolder.exists() && apkSmaliFolder.isDirectory()) {
+                System.out.println("[+]SMALI files found!");
+                System.out.println("[+]Copying the SMALI files to the template project");
+                File templateSmaliFolder = new File(Constants.TEMP_TEMPLATE_SMALI_FOLDER);
+                templateSmaliFolder.mkdir();
+                fileManager.copyFolder(apkSmaliFolder, templateSmaliFolder);
+                System.out.println("[+]SMALI files succesfully copied!");
+                return;
+            }
+            System.out.println("[+]No SMALI files found, skipping this step.");
+        } catch (IOException e) {
+            throw new IOException("Something went wrong when copying the SMALI files from the APK to the template project.");
+        }
+    }
+
+    /**
+     * Copies assets from the APK to the resource folder of the template project
+     *
+     * @throws IOException
+     */
+    private void copyAssets() throws IOException {
+        try {
+            System.out.println("[+]Looking for assets");
+            File apkAssetFolder = new File(Constants.TEMP_ASSET_FOLDER);
+            if (apkAssetFolder.exists() && apkAssetFolder.isDirectory()) {
+                System.out.println("[+]Assets found!");
+                System.out.println("[+]Copying assets to the template project");
+                File templateAssetFolder = new File(Constants.TEMP_TEMPLATE_ASSET_FOLDER);
+                templateAssetFolder.mkdir();
+                fileManager.copyFolder(apkAssetFolder, templateAssetFolder);
+                System.out.println("[+]Assets succesfully copied!");
+                return;
+            }
+            System.out.println("[+]No assets found, skipping this step.");
+        } catch (IOException e) {
+            throw new IOException("Something went wrong when copying assets from the APK to the template project.");
+        }
     }
 
     /**

@@ -38,10 +38,12 @@ public class Tools {
         List<Tool> tools = new ArrayList<>();
         tools.add(getAndroidStudioProject());
         tools.add(getApkTool());
+        tools.add(getCfr());
         tools.add(getDex2Jar());
         tools.add(getJadX());
         tools.add(getJdCmd());
         tools.add(getFernflower());
+        tools.add(getProcyon());
         return tools;
     }
 
@@ -97,5 +99,23 @@ public class Tools {
      */
     private static Tool getAndroidStudioProject() {
         return new Tool(Repositories.getAndroidProject(), null);
+    }
+
+    /**
+     * The pre-built CFR decompiler tool
+     *
+     * @return the pre-built CFR decompiler tool object
+     */
+    private static Tool getCfr() {
+        return new Tool(Repositories.getCfr(), null);
+    }
+
+    /**
+     * The pre-built Procyon decompiler tool
+     *
+     * @return the pre-built Procyon decompiler tool object
+     */
+    private static Tool getProcyon() {
+        return new Tool(Repositories.getProcyon(), null);
     }
 }

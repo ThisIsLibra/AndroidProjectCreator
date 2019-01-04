@@ -49,12 +49,6 @@ public class ArgumentManager {
      * @param action the action to be executed
      */
     public void executeAction(Action action) {
-        //If incorrect or unknown parameters are provided, APC provides feedback to the user and then terminates.
-        if (action == Action.ERROR) {
-            showUsage();
-            //Close APC with the 'unsuccessful' message, hence the '1' as parameter, instead of 0
-            System.exit(1);
-        }
         try {
             //Since there was no error, the remaining options for the enum are handled below. Exceptions that occur during the actions that are defined within the enum, are caught in a single try-catch structure to aggregate all exceptions at one place. This improves the exception handling usability and maintainability and provides more information to the user.
             switch (action) {
@@ -152,6 +146,10 @@ public class ArgumentManager {
                     decompilerType = DecompilerType.JADX;
                 } else if (decompilerString.equals(DecompilerType.JDCMD.toString().toLowerCase())) {
                     decompilerType = DecompilerType.JDCMD;
+                } else if (decompilerString.equals(DecompilerType.CFR.toString().toLowerCase())) {
+                    decompilerType = DecompilerType.CFR;
+                } else if (decompilerString.equals(DecompilerType.PROCYON.toString().toLowerCase())) {
+                    decompilerType = decompilerType.PROCYON;
                 }
                 //Sets the path to the APK
                 apk = Paths.get(args[2]).toFile();
@@ -174,7 +172,7 @@ public class ArgumentManager {
     /**
      * Shows the usage information to the user
      */
-    private void showUsage() {
+    public void showUsage() {
         StringBuilder usage = new StringBuilder();
         usage.append("[+]AndroidProjectCreator has multiple modes, all of which are explained below, together with the required parameters.\n");
         usage.append("\t-install\n");
@@ -191,7 +189,7 @@ public class ArgumentManager {
         usage.append("\t-decompile\n");
         usage.append("\t\tUsing this function, more parameters are required.\n");
         usage.append("\t\tThe name of the decompiler needs to be specified, using one of the following embedded decompilers:\n");
-        usage.append("\t\t\tFERNFLOWER, JDCMD, JADX\n");
+        usage.append("\t\t\tCFR, FERNFLOWER, JDCMD, JADX, PROCYON\n");
         usage.append("\t\tAdditionally, the location of the APK and the output location for the Android Project are required.\n");
         usage.append("\t\tSample usage to decompile an APK:\n");
         if (OperatingSystemDetector.isWindows()) {
@@ -206,7 +204,7 @@ public class ArgumentManager {
      * Displays the given error message with an introduction
      */
     private void showError(Exception ex) {
-        System.out.println("[+]An error has occurred, therefore AndroidProjectCreator has shut down. The error message is given below.");
+        System.out.println("\n\n[+]An error has occurred, therefore AndroidProjectCreator has shut down. The error message is given below.");
         System.out.println("");
         System.out.println(ex.getMessage());
         System.out.println("");
@@ -217,7 +215,7 @@ public class ArgumentManager {
      * Display the version information
      */
     public void showVersion() {
-        String versionNumber = "1.0-stable";
+        String versionNumber = "1.1-stable";
 
         StringBuilder version = new StringBuilder();
         version.append("[+]AndroidProjectCreator " + versionNumber + " [developed by Max 'Libra' Kersten <info@maxkersten.nl>]\n");
