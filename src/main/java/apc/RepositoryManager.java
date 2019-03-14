@@ -19,6 +19,7 @@ package apc;
 import enumeration.DecompilerType;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import library.Constants;
 import model.Repository;
@@ -59,18 +60,6 @@ public class RepositoryManager {
     }
 
     /**
-     * Removes the library folder if it exists
-     *
-     * @throws IOException if the file and folder deletion goes wrong
-     */
-    private void removeLibraryFolder() throws IOException {
-        File library = new File(Constants.LIBRARY_FOLDER);
-        if (library.exists()) {
-            fileManager.delete(library);
-        }
-    }
-
-    /**
      * Clones all repositories that are provided
      *
      * @param repositoryList the repositories to be cloned
@@ -86,6 +75,20 @@ public class RepositoryManager {
     }
 
     /**
+     * Updates all repositories that are given using.
+     *
+     * @param repositoryList the repositories to be updated
+     * @throws IOException if an IO operation returns an error
+     */
+    public void updateRepositories(List<Repository> repositoryList) throws IOException {
+        for (Repository repository : repositoryList) {
+            System.out.println("[+]Started updating " + repository.getName());
+            repository.updateRepository();
+            System.out.println("[+]Succesfully updated " + repository.getName());
+        }
+    }
+
+    /**
      * Builds each project that is provided
      *
      * @param tools the tools to be build
@@ -95,9 +98,10 @@ public class RepositoryManager {
     public void buildRepositories(List<Tool> tools) throws IOException, InterruptedException {
         for (Tool tool : tools) {
             try {
-                if (tool.getRepository().getName().equalsIgnoreCase("androidstudioproject")
+                if (tool.getRepository().getName().equalsIgnoreCase("androidproject")
                         || tool.getRepository().getName().equalsIgnoreCase(DecompilerType.CFR.toString())
-                        || tool.getRepository().getName().equalsIgnoreCase(DecompilerType.PROCYON.toString())) {
+                        || tool.getRepository().getName().equalsIgnoreCase(DecompilerType.PROCYON.toString())
+                        || tool.getRepository().getName().equalsIgnoreCase(DecompilerType.JEB3.toString())) {
                     continue;
                 }
                 System.out.println("[+]Starting to build " + tool.getRepository().getName());
@@ -106,6 +110,19 @@ public class RepositoryManager {
             } catch (IOException ex) {
                 throw new IOException("Something went wrong when building " + tool.getRepository().getName());
             }
+        }
+    }
+
+    /**
+     * Empty the folders of each repository before the content is placed in it.
+     * This is required during the update process
+     *
+     * @param tools the tools which will be emptied
+     * @throws IOException is an IO error occurs
+     */
+    public void emptyLibraryFolders(List<Tool> tools) throws IOException {
+        for (Tool tool : tools) {
+            fileManager.emptyFolder(new File(Constants.LIBRARY_FOLDER + "/" + tool.getRepository().getName()));
         }
     }
 
@@ -119,8 +136,12 @@ public class RepositoryManager {
     public void extractBuilds(List<Tool> tools) throws IOException {
         for (Tool tool : tools) {
             try {
-                //Since the Android Studio Project repository, CFR mirror and Procyon mirror only consist of a single file, it does not need to be extracted.
-                if (tool.getRepository().getName().equalsIgnoreCase("androidstudioproject")) {
+                /**
+                 * Since the Android Studio Project repository, CFR mirror,
+                 * Procyon mirror and JEB3 CLI Android Decompiler script only
+                 * consist of a single file, it does not need to be extracted.
+                 */
+                if (tool.getRepository().getName().equalsIgnoreCase("androidproject")) {
                     fileManager.copyFolder(new File(Constants.ANDROIDPROJECT_REPOSITORY_FOLDER), new File(Constants.ANDROIDPROJECT_LIBRARY_FOLDER));
                     continue;
                 } else if (tool.getRepository().getName().equalsIgnoreCase(DecompilerType.CFR.toString())) {
@@ -128,6 +149,9 @@ public class RepositoryManager {
                     continue;
                 } else if (tool.getRepository().getName().equalsIgnoreCase(DecompilerType.PROCYON.toString())) {
                     fileManager.copyFolder(new File(Constants.PROCYON_REPOSITORY_FOLDER), new File(Constants.PROCYON_LIBRARY_FOLDER));
+                    continue;
+                } else if (tool.getRepository().getName().equalsIgnoreCase(DecompilerType.JEB3.toString())) {
+                    fileManager.copyFolder(new File(Constants.JEB3_CLI_ANDROID_SCRIPT_REPOSITORY_FOLDER), new File(Constants.JEB3_CLI_ANDROID_SCRIPT_LIBRARY_FOLDER));
                     continue;
                 }
                 System.out.println("[+]Extracting " + tool.getRepository().getName());
@@ -160,13 +184,61 @@ public class RepositoryManager {
     }
 
     /**
-     * Removes the <code>Constants.LIBRARY_FOLDER</code> folder if it exists and
-     * creates it. Otherwise the folder is just created.
+     * Verify if all required folders are present (every enum value in
+     * DecompilerType). Define which ones are missing and add those in the error
+     * message. Reason for this method is the fact that the child process which
+     * is launched in the command, launches another child to execute the
+     * process. The error code is hard to retrieve, so this method was chosen
+     * instead.
      *
-     * @throws IOException if a file cannot be deleted
+     * @throws Exception if one or more tools fail to install
      */
-    public void setupLibrary() throws IOException {
-        removeLibraryFolder();
-        new File(Constants.LIBRARY_FOLDER).mkdirs();
+    public void verifyInstallation() throws Exception {
+        //Create a list in which all of the results go
+        List<String> missingTools = new ArrayList<>();
+
+        //Create an object for each folder
+        File androidProjectFolder = new File(Constants.ANDROIDPROJECT_LIBRARY_FOLDER);
+        File apkToolFolder = new File(Constants.APKTOOL_LIBRARY_FOLDER);
+        File dex2jarFolder = new File(Constants.DEX2JAR_LIBRARY_FOLDER);
+        File fernflowerFolder = new File(Constants.FERNFLOWER_LIBRARY_FOLDER);
+        //Since the JadX folder is set to the "bin" folder within the "jadx" folder, the last four characters need to be removed in order for the name-printing to work
+        File jadxFolder = new File(new String(Constants.JADX_LIBRARY_FOLDER).substring(0, Constants.JADX_LIBRARY_FOLDER.length() - 4));
+        File jdcmdFolder = new File(Constants.JDCMD_LIBRARY_FOLDER);
+        File crfFolder = new File(Constants.CFR_LIBRARY_FOLDER);
+        File procyonFolder = new File(Constants.PROCYON_LIBRARY_FOLDER);
+        File jeb3Script = new File(Constants.JEB3_CLI_ANDROID_SCRIPT_LIBRARY_FOLDER);
+
+        //Add all folders in a list
+        List<File> folders = new ArrayList<>();
+        folders.add(androidProjectFolder);
+        folders.add(apkToolFolder);
+        folders.add(dex2jarFolder);
+        folders.add(fernflowerFolder);
+        folders.add(jadxFolder);
+        folders.add(jdcmdFolder);
+        folders.add(crfFolder);
+        folders.add(procyonFolder);
+        folders.add(jeb3Script);
+
+        //Check each of the folders in the folders list
+        for (File folder : folders) {
+            //If it does not exist or is not a folder, then something went wrong
+            if (folder.exists() == false || folder.isDirectory() == false) {
+                //Add the missing tool to the list
+                missingTools.add(folder.getName());
+            }
+        }
+
+        //If the list contains 1 or more elements, an exception is thrown to notify the user
+        if (missingTools.size() > 0) {
+            StringBuilder message = new StringBuilder();
+            message.append("\tThe following tools failed to install correctly:\n");
+            for (String missingTool : missingTools) {
+                message.append("\t\t" + missingTool.toUpperCase() + "\n");
+            }
+            message.append("\tSee the output log above for more details. Verify that you have installed the correct dependencies before you try again.");
+            throw new Exception(message.toString());
+        }
     }
 }

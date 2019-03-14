@@ -19,13 +19,13 @@ package apc;
 import command.Assembler;
 import command.Installer;
 import command.Decompiler;
-import enumeration.Action;
+import command.Updater;
 import enumeration.DecompilerType;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import library.Constants;
 import library.OperatingSystemDetector;
+import model.ArgumentPackage;
 
 /**
  * Handles everything regarding the flow of the AndroidProjectCreator, based on
@@ -38,20 +38,23 @@ import library.OperatingSystemDetector;
  */
 public class ArgumentManager {
 
-    private DecompilerType decompilerType;
-    private File apk;
-    private File outputLocation;
-
     /**
      * The action, as defined by the <code>setArguments</code> function, will be
      * executed.
      *
-     * @param action the action to be executed
+     * @param arguments the provided arguments
      */
-    public void executeAction(Action action) {
+    public void execute(ArgumentPackage arguments) {
         try {
-            //Since there was no error, the remaining options for the enum are handled below. Exceptions that occur during the actions that are defined within the enum, are caught in a single try-catch structure to aggregate all exceptions at one place. This improves the exception handling usability and maintainability and provides more information to the user.
-            switch (action) {
+            /**
+             * Since there was no error, the remaining options for the enum are
+             * handled below. Exceptions that occur during the actions that are
+             * defined within the enum, are caught in a single try-catch
+             * structure to aggregate all exceptions at one place. This improves
+             * the exception handling usability and maintainability and provides
+             * more information to the user.
+             */
+            switch (arguments.getAction()) {
                 case INSTALL:
                     /**
                      * Clone the repositories, build the projects and save them
@@ -64,22 +67,19 @@ public class ArgumentManager {
                     break;
                 case UPDATE:
                     /**
-                     * Updating the library is done via a new clone of the
-                     * repositories, which are then built and stored in the
-                     * <code>Constant.LIBRARY_FOLDER_NAME</code> folder.
-                     *
-                     * TODO in future versions, the repositories are saved,
-                     * properly updated and build again.
+                     * Updating the library is done by pulling the repository
+                     * from the selected branch, rebuilding the tool and
+                     * replacing it in the correct library folder.
                      */
-                    Installer updater = new Installer();
-                    updater.install();
+                    Updater updater = new Updater();
+                    updater.update();
                     break;
                 case DECOMPILE:
                     //Decompile the APK into the parts required for the assembler
-                    Decompiler decompiler = new Decompiler(decompilerType, apk);
+                    Decompiler decompiler = new Decompiler(arguments);
                     decompiler.decompile();
                     //Assemble the taken manifest and source files together with the Android Studio project
-                    Assembler assembler = new Assembler(outputLocation);
+                    Assembler assembler = new Assembler(arguments.getOutputLocation());
                     assembler.assemble();
                     break;
                 default:
@@ -89,7 +89,7 @@ public class ArgumentManager {
                     break;
             }
         } catch (Exception ex) {
-            cleanOnError();
+            cleanOnError(arguments.getOutputLocation());
             showError(ex);
             System.exit(1);
         }
@@ -99,7 +99,7 @@ public class ArgumentManager {
      * If an error occurs, the output location and the temp folder within the
      * library need to be cleaned. This method does exactly that.
      */
-    private void cleanOnError() {
+    private void cleanOnError(File outputLocation) {
         try {
             FileManager fileManager = new FileManager();
             //If something goes wrong during the installation or update, the outputLocation variable is equal to null
@@ -110,63 +110,6 @@ public class ArgumentManager {
         } catch (IOException ex) {
             System.out.println("[+]Something went wrong during the removal of " + outputLocation.getAbsolutePath());
         }
-    }
-
-    /**
-     * Extracts the arguments from the provided String array and saves them into
-     * their respective fields in this class
-     *
-     * CLI usage:
-     * <code>java -jar AndroidProjectCreator.jar -decompile [name] /path/to/app.apk /path/to/output/to</code>
-     *
-     * Possible decompilers: JDCmd (uses JD-Core, also used in JD-GUI), JADX,
-     * and Fernflower
-     *
-     * @param args the string array containing the user defined input
-     * @return if all variables were set, the requested action is returned as an
-     * enum value. If one or more variables were not set successfully, the
-     * enum's value equals Action.ERROR.
-     */
-    public Action setArguments(String[] args) {
-        //Check if the amount of provided arguments equals one, which is also equal to the installation command. Note that both strings are converted to a lowercase variant.
-        if (args.length == 1 && "-install".toLowerCase().equals(args[0].toLowerCase())) {
-            return Action.INSTALL;
-            //Check if the update command is provided (if it is not the installation command).
-        } else if (args.length == 1 && "-update".toLowerCase().equals(args[0].toLowerCase())) {
-            return Action.UPDATE;
-            //Check if the amount of arguments equals 4, of which the first equals to the decompile command.
-        } else if (args.length == 4 && "-decompile".toLowerCase().equals(args[0].toLowerCase())) {
-            //Sanity check all the other arguments
-            if (null != args[1] && args[1].isEmpty() == false && null != args[2] && args[2].isEmpty() == false) {
-                //Set the decompiler type
-                String decompilerString = args[1].toLowerCase();
-                if (decompilerString.equals(DecompilerType.FERNFLOWER.toString().toLowerCase())) {
-                    decompilerType = DecompilerType.FERNFLOWER;
-                } else if (decompilerString.equals(DecompilerType.JADX.toString().toLowerCase())) {
-                    decompilerType = DecompilerType.JADX;
-                } else if (decompilerString.equals(DecompilerType.JDCMD.toString().toLowerCase())) {
-                    decompilerType = DecompilerType.JDCMD;
-                } else if (decompilerString.equals(DecompilerType.CFR.toString().toLowerCase())) {
-                    decompilerType = DecompilerType.CFR;
-                } else if (decompilerString.equals(DecompilerType.PROCYON.toString().toLowerCase())) {
-                    decompilerType = decompilerType.PROCYON;
-                }
-                //Sets the path to the APK
-                apk = Paths.get(args[2]).toFile();
-                //Sanity checks on the APK
-                if (apk.exists() && apk.isFile()) {
-                    //Set the location where the output should be written to
-                    outputLocation = Paths.get(args[3]).toFile();
-                    //Make sure the output location exists completely, thus all parent folders are also created if need be
-                    if (!outputLocation.exists()) {
-                        outputLocation.mkdirs();
-                    }
-                    return Action.DECOMPILE;
-                }
-            }
-        }
-        //Return error if something went wrong
-        return Action.ERROR;
     }
 
     /**
@@ -181,22 +124,23 @@ public class ArgumentManager {
         usage.append("\t\tThen, the compiled repositories are saved in a folder named \"Library\" in the folder where the JAR resides.\n");
         usage.append("\t\tThe repositories are then deleted from the disk.\n");
         usage.append("\t\tCurrently, the following tools are embedded:\n");
-        for (DecompilerType type : DecompilerType.values()) {
-            usage.append("\t\t\t" + type + "\n");
+        for (DecompilerType decompilerType : DecompilerType.values()) {
+            usage.append("\t\t\t" + decompilerType + "\n");
         }
         usage.append("\t-update\n");
         usage.append("\t\tUpdating the library folder is equal to reinstalling the library using the -install function.\n");
         usage.append("\t-decompile\n");
         usage.append("\t\tUsing this function, more parameters are required.\n");
         usage.append("\t\tThe name of the decompiler needs to be specified, using one of the following embedded decompilers:\n");
-        usage.append("\t\t\tCFR, FERNFLOWER, JDCMD, JADX, PROCYON\n");
+        usage.append("\t\t\tCFR, FERNFLOWER, JADX, JDCMD, JEB3 and PROCYON\n");
         usage.append("\t\tAdditionally, the location of the APK and the output location for the Android Project are required.\n");
         usage.append("\t\tSample usage to decompile an APK:\n");
         if (OperatingSystemDetector.isWindows()) {
-            usage.append("\t\t\t java -jar AndroidProjectCreator.jar -decompile FERNFLOWER path\\to\\the.apk output\\path");
+            usage.append("\t\t\t java -jar AndroidProjectCreator.jar -decompile FERNFLOWER path\\to\\the.apk output\\path\n");
         } else {
             usage.append("\t\t\tjava -jar ./AndroidProjectCreator.jar -decompile FERNFLOWER /path/to/the.apk /output/path/\n");
         }
+        usage.append("\t\tNote that one should provide the path to the JEB3 folder as a fifth argument if JEB3 is chosen to decompile the code.\n ");
         System.out.println(usage.toString());
     }
 
@@ -215,8 +159,7 @@ public class ArgumentManager {
      * Display the version information
      */
     public void showVersion() {
-        String versionNumber = "1.1-stable";
-
+        String versionNumber = "1.2-stable";
         StringBuilder version = new StringBuilder();
         version.append("[+]AndroidProjectCreator " + versionNumber + " [developed by Max 'Libra' Kersten <info@maxkersten.nl>]\n");
         System.out.println(version.toString());

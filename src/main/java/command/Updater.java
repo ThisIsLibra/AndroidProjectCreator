@@ -22,36 +22,30 @@ import library.Repositories;
 import library.Tools;
 
 /**
- * Handles the installation of all tools
+ * Handles the repositories to update and rebuild them
  *
  * @author Max 'Libra' Kersten
  */
-public class Installer {
+public class Updater {
 
-    /**
-     * Clones all the git repositories in a sub folder of
-     * <code>Constants.getLibraryFolderName()</code> (named "repos") in the
-     * current directory. Then, all projects are built to ensure the latest
-     * version is used. The outcome of the builds is either a ZIP or a JAR file.
-     * A ZIP file will first be extracted. The tools are then copied into the
-     * <code>Constants.getLibraryFolderName()</code> folder within their own
-     * subdirectory.
-     */
-    public void install() throws IOException, Exception {
-        System.out.println("[+]Starting the installation");
+    public void update() throws IOException, Exception {
+        System.out.println("[+]Starting the update");
         RepositoryManager repositoryManager = new RepositoryManager();
-        System.out.println("[+]Starting cloning the repositories");
-        repositoryManager.cloneRepositories(Repositories.getAll());
-        System.out.println("[+]Cloning finished");
+        System.out.println("[+]Starting updating the repositories");
+        repositoryManager.updateRepositories(Repositories.getAll());
+        System.out.println("[+]Updating finished");
         System.out.println("[+]Starting to build all repositories");
         repositoryManager.buildRepositories(Tools.getTools());
         System.out.println("[+]All projects have been built");
+        System.out.println("[+]Removing tools from the library");
+        repositoryManager.emptyLibraryFolders(Tools.getTools());
+        System.out.println("[+]Succesfully removed tools from the library");
         System.out.println("[+]Starting to extract the builds to the library");
         repositoryManager.extractBuilds(Tools.getTools());
         System.out.println("[+]Extraction complete");
         System.out.println("[+]Verifying the toolset");
         repositoryManager.verifyInstallation();
         System.out.println("[+]Verification succesful!");
-        System.out.println("[+]Installation complete!");
+        System.out.println("[+]Update complete!");
     }
 }
