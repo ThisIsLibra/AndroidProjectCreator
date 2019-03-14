@@ -42,6 +42,7 @@ public class Tools {
         tools.add(getDex2Jar());
         tools.add(getJadX());
         tools.add(getJdCmd());
+        tools.add(getJeb3AndroidDecompilerScript());
         tools.add(getFernflower());
         tools.add(getProcyon());
         return tools;
@@ -117,5 +118,14 @@ public class Tools {
      */
     private static Tool getProcyon() {
         return new Tool(Repositories.getProcyon(), null);
+    }
+
+    /**
+     * The JEB3 Android decompiler script
+     *
+     * @return the tool object containing the repository
+     */
+    private static Tool getJeb3AndroidDecompilerScript() {
+        return new Tool(Repositories.getJeb3AndroidDecompilerScript(), null);
     }
 }

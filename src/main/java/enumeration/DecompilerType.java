@@ -28,5 +28,6 @@ public enum DecompilerType {
     FERNFLOWER,
     JADX,
     JDCMD,
+    JEB3,
     PROCYON
 }

@@ -45,6 +45,7 @@ public class Repositories {
         repositories.add(getFernflower());
         repositories.add(getJadX());
         repositories.add(getJdCmd());
+        repositories.add(getJeb3AndroidDecompilerScript());
         repositories.add(getProcyon());
         return repositories;
     }
@@ -123,7 +124,8 @@ public class Repositories {
      * @return the Android Studio template project
      */
     public static Repository getAndroidProject() {
-        String name = "androidstudioproject";
+        String name = "androidproject";
+        //String name = "androidstudioproject";
         String url = "https://github.com/ThisIsLibra/AndroidStudioProject.git";
         File directory = new File(Constants.ANDROIDPROJECT_REPOSITORY_FOLDER);
         String branch = "master";
@@ -139,7 +141,7 @@ public class Repositories {
         String name = DecompilerType.CFR.toString().toLowerCase();
         String url = "https://github.com/ThisIsLibra/cfr-decompiler.git";
         File directory = new File(Constants.CFR_REPOSITORY_FOLDER);
-        String branch = "apc-1.1";
+        String branch = "apc-1.2";
         return new Repository(name, url, directory, branch);
     }
 
@@ -153,6 +155,19 @@ public class Repositories {
         String url = "https://github.com/ThisIsLibra/procyon-decompiler.git";
         File directory = new File(Constants.PROCYON_REPOSITORY_FOLDER);
         String branch = "apc-1.1";
+        return new Repository(name, url, directory, branch);
+    }
+
+    /**
+     * Get the script to decompile an Android Package (APK) with JEB3
+     *
+     * @return the repository with the JEB3 script
+     */
+    public static Repository getJeb3AndroidDecompilerScript() {
+        String name = DecompilerType.JEB3.toString().toLowerCase();
+        String url = "https://github.com/ThisIsLibra/jeb3-cli-android-decompiler.git";
+        File directory = new File(Constants.JEB3_CLI_ANDROID_SCRIPT_REPOSITORY_FOLDER);
+        String branch = "master";
         return new Repository(name, url, directory, branch);
     }
 }

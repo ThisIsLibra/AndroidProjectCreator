@@ -81,6 +81,35 @@ public class FileManager {
     }
 
     /**
+     * Removes all files and subfolders from the provided folder, excluding the
+     * ".git" folder.
+     *
+     * Code taken from Erickson (from
+     * "https://stackoverflow.com/questions/779519/delete-directories-recursively-in-java").
+     * Code altered by Max 'Libra' Kersten.
+     *
+     * @param folder the folder to remove files from
+     * @throws IOException if an error occurs upon deleting the file
+     */
+    public void emptyFolder(File folder) throws IOException {
+        //Check if the file does not exist
+        if (!folder.exists()) {
+            //A newly created folder is also an empty folder
+            folder.mkdirs();
+            return;
+        }
+
+        if (folder.isDirectory()) {
+            for (File currentFile : folder.listFiles()) {
+                //Exclude the .git folder to avoid errors on Windows
+                if (!currentFile.getName().endsWith(".git")) {
+                    delete(currentFile);
+                }
+            }
+        }
+    }
+
+    /**
      * Copies a folder (including all the sub folders) to the given destination.
      *
      * Originally taken from pwipo

@@ -106,16 +106,15 @@ public class Repository {
      */
     public void updateRepository() throws IOException {
         try {
-            System.out.println("[+]Started updating " + name);
             Git git = Git.open(directory);
             if (git.pull().setRemoteBranchName(branch).call().isSuccessful()) {
                 System.out.println("[+]Git pull succesful for " + name);
             }
         } catch (GitAPIException ex) {
             //Because the GitAPIException is abstract and cannot be instantiated, another (similar) exception is used
-            throw new IOException("[+]Git pull failed, AndroidProjectCreator will now exit");
+            throw new IOException("Git pull failed, AndroidProjectCreator will now exit");
         } catch (IOException ex) {
-            throw new IOException("Directory not found, reinstall AndroidProjectCreator and check your permissions in this folder. AndroidProjectCreator will now exit.");
+            throw new IOException("Repository directory not found, reinstall AndroidProjectCreator and check your permissions in this folder. AndroidProjectCreator will now exit.");
         }
     }
 }

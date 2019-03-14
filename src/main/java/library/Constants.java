@@ -36,6 +36,7 @@ import java.util.UUID;
 public class Constants {
 
     /**
+     * Obtain the base location of this instance of APC
      *
      * @return the folder in which the JAR resides
      */
@@ -121,12 +122,12 @@ public class Constants {
      * The location of the SMALI folder within the resources folder of the
      * template project
      */
-    public static final String TEMP_TEMPLATE_SMALI_FOLDER = TEMP_TEMPLATE_RESOURCES_FOLDER + "/smali";
+    public static final String TEMP_TEMPLATE_SMALI_FOLDER = TEMP_TEMPLATE_SOURCE + "/smali";
 
     /**
      * The location of the libraries within the template project
      */
-    public static final String TEMP_TEMPLATE_LIBS_FOLDER = TEMP_TEMPLATE_RESOURCES_FOLDER + "/libraries";
+    public static final String TEMP_TEMPLATE_LIBS_FOLDER = TEMP_TEMPLATE_SOURCE + "/libraries";
 
     /**
      * The temporary folder used to store the decompiled source code
@@ -188,6 +189,10 @@ public class Constants {
     public static final String ANDROIDPROJECT_LIBRARY_FOLDER = LIBRARY_FOLDER + "/androidproject";
 
     /**
+     * The location of the JEB3 CLI Android Decompiler script within the library
+     */
+    public static final String JEB3_CLI_ANDROID_SCRIPT_LIBRARY_FOLDER = LIBRARY_FOLDER + "/jeb3";
+    /**
      * The location of CFR within the library
      */
     public static final String CFR_LIBRARY_FOLDER = LIBRARY_FOLDER + "/cfr";
@@ -226,6 +231,11 @@ public class Constants {
      * The location of the APKTool repository on the disk
      */
     public static final String APKTOOL_REPOSITORY_FOLDER = REPOSITORY_FOLDER + "/apktool";
+
+    /**
+     * The location of the JEB3 CLI Android Decompiler script repository
+     */
+    public static final String JEB3_CLI_ANDROID_SCRIPT_REPOSITORY_FOLDER = REPOSITORY_FOLDER + "/jeb3";
 
     /**
      * The location of the Android Studio template repository on the disk

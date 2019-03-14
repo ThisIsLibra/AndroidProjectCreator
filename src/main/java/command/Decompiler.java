@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import library.Constants;
 import library.OperatingSystemDetector;
+import model.ArgumentPackage;
 import model.Command;
 import net.lingala.zip4j.exception.ZipException;
 
@@ -33,12 +34,10 @@ import net.lingala.zip4j.exception.ZipException;
  */
 public class Decompiler {
 
-    private final DecompilerType decompiler;
-    private final File apk;
+    private final ArgumentPackage argumentPackage;
 
-    public Decompiler(DecompilerType decompiler, File apk) {
-        this.decompiler = decompiler;
-        this.apk = apk;
+    public Decompiler(ArgumentPackage argumentPackage) {
+        this.argumentPackage = argumentPackage;
     }
 
     /**
@@ -90,7 +89,7 @@ public class Decompiler {
             command = "java -jar ./apktool-cli-all.jar";
         }
         //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-        command += " d -f -s -m -k -o " + new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath() + "/apktool" + " " + apk.getAbsolutePath();
+        command += " d -f -s -m -k -o " + new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath() + "/apktool" + " " + argumentPackage.getApk().getAbsolutePath();
 
         workingDirectory = new File(Constants.APKTOOL_LIBRARY_FOLDER);
         executeCommand(DecompilerType.APKTOOL, command, workingDirectory);
@@ -102,8 +101,8 @@ public class Decompiler {
          * The flag '--no-assets' avoids the decoding of assets in the APK,
          * which are already extracted in the previous call of APKTool.
          *
-         * The '--no-res' avoids the decoding of resources, which is also done in the
-         * previous call of APKTool.
+         * The '--no-res' avoids the decoding of resources, which is also done
+         * in the previous call of APKTool.
          *
          */
         System.out.println("[+]Calling APKTool to obtain the SMALI code");
@@ -113,7 +112,7 @@ public class Decompiler {
             command = "java -jar ./apktool-cli-all.jar";
         }
         //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-        command += " d -f --no-assets --no-res -m -o " + new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath() + "/apktool-smali" + " " + apk.getAbsolutePath();
+        command += " d -f --no-assets --no-res -m -o " + new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath() + "/apktool-smali" + " " + argumentPackage.getApk().getAbsolutePath();
 
         workingDirectory = new File(Constants.APKTOOL_LIBRARY_FOLDER);
         executeCommand(DecompilerType.APKTOOL, command, workingDirectory);
@@ -148,7 +147,7 @@ public class Decompiler {
         new File(Constants.TEMP_SOURCES_FOLDER).mkdir();
 
         //Handle each decompiler with different commands
-        switch (decompiler) {
+        switch (argumentPackage.getDecompilerType()) {
             case FERNFLOWER:
                 //TODO implement rename option
                 //use -ren=1 for rename
@@ -209,9 +208,9 @@ public class Decompiler {
                  *
                  */
                 if (isWindows) {
-                    command = "java -jar cfr-0.138.jar";
+                    command = "java -jar cfr-0.140.jar";
                 } else {
-                    command = "java -jar ./cfr-0.138.jar";
+                    command = "java -jar ./cfr-0.140.jar";
                 }
                 //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
                 command += " --aexagg true --outputdir " + new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath() + " " + new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath();
@@ -235,8 +234,25 @@ public class Decompiler {
                 command += " -ci -eml --jar-file " + new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath() + " -o " + new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath();
                 workingDirectory = new File(Constants.PROCYON_LIBRARY_FOLDER);
                 break;
+            case JEB3:
+                /**
+                 * No parameters are required besides the path to the file and
+                 * the output directory (in that order)
+                 *
+                 * JEB decompile command:
+                 *
+                 * java -jar ./jeb.jar --srv2=DecompileAndroid.py -- FILE
+                 * OUTPUT_DIR
+                 */
+                if (isWindows) {
+                    command = "java -jar bin/app/jeb.jar";
+                } else {
+                    command = "java -jar ./bin/app/jeb.jar";
+                }
+                command += " --srv2 --script=" + Constants.JEB3_CLI_ANDROID_SCRIPT_LIBRARY_FOLDER + "/DecompileAndroid.py -- " + argumentPackage.getApk().getAbsolutePath() + " " + new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath();
+                workingDirectory = argumentPackage.getJeb3Folder();
         }
-        executeCommand(decompiler, command, workingDirectory);
+        executeCommand(argumentPackage.getDecompilerType(), command, workingDirectory);
     }
 
     /**
@@ -260,6 +276,20 @@ public class Decompiler {
             if (name.equals(DecompilerType.FERNFLOWER)) {
                 new FileManager().extractArchive(new File(Constants.TEMP_SOURCES_FOLDER + "/output.jar").getAbsolutePath(), new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath());
                 new FileManager().delete(new File(Constants.TEMP_SOURCES_FOLDER + "/output.jar"));
+            } else if (name.equals(DecompilerType.JEB3)) {
+                /**
+                 * If the JEB3 output folder exists, copy the contents to the
+                 * TEMP_SOURCES_FOLDER and remove the JEB3 output folder. This
+                 * way, the rest file handling can stay the same.
+                 */
+                File sourceLocation = new File(Constants.TEMP_SOURCES_FOLDER);
+                File jeb3Output = new File(sourceLocation.getAbsolutePath() + "/Bytecode_decompiled");
+                if (jeb3Output.exists() && jeb3Output.isDirectory()) {
+                    for (File currentFileObject : sourceLocation.listFiles()) {
+                        new FileManager().copyFolder(currentFileObject, sourceLocation);
+                    }
+                    new FileManager().delete(jeb3Output);
+                }
             }
             System.out.println("[+]Decompilation finished");
         } catch (IOException ex) {
