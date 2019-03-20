@@ -102,7 +102,7 @@ public class ArgumentParser {
         ArgumentPackage argumentPackage;
         //Set the decompiler type
         String decompilerString = args[1];
-        if (decompilerString.equals(DecompilerType.FERNFLOWER.toString().toLowerCase())) {
+        if (decompilerString.equalsIgnoreCase(DecompilerType.FERNFLOWER.toString())) {
             decompilerType = DecompilerType.FERNFLOWER;
         } else if (decompilerString.equalsIgnoreCase(DecompilerType.JADX.toString())) {
             decompilerType = DecompilerType.JADX;
