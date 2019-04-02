@@ -19,6 +19,7 @@ package apc;
 import enumeration.Action;
 import enumeration.DecompilerType;
 import java.io.File;
+import library.OperatingSystemDetector;
 import model.ArgumentPackage;
 
 /**
@@ -48,7 +49,7 @@ public class AndroidProjectCreator {
         if (debugging) {
             //installTest();
             //updateTest();
-            decompileTest(DecompilerType.JEB3);
+            decompileTest(DecompilerType.FERNFLOWER);
             System.exit(0);
         }
 
@@ -110,7 +111,12 @@ public class AndroidProjectCreator {
         }
         args[0] = "-decompile";
         args[1] = decompiler.toString().toLowerCase();
-        args[2] = "/home/libra/Documents/apc-test/apk/challenge1_release.apk";
+        //Mac is excluded from the tests
+        if (OperatingSystemDetector.isLinux()) {
+            args[2] = "/home/libra/Documents/apc-test/apk/challenge1_release.apk";
+        } else if (OperatingSystemDetector.isWindows()) {
+            args[2] = "C:\\Users\\Libra\\Downloads\\ap k.apk";
+        }
         args[3] = "./test-output-guid-" + java.util.UUID.randomUUID();
         if (decompiler == DecompilerType.JEB3) {
             args[4] = "/home/libra/Downloads/jeb-pro";
@@ -119,7 +125,7 @@ public class AndroidProjectCreator {
         ArgumentPackage argumentPackage = argumentParser.setArguments(args);
         manager.execute(argumentPackage);
     }
-    
+
     //TODO refactor this method into the argument parser
     private static void handleAction(ArgumentManager manager, String[] args) {
         //If no arguments are given, the general usage information should be given

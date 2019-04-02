@@ -89,7 +89,7 @@ public class Decompiler {
             command = "java -jar ./apktool-cli-all.jar";
         }
         //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-        command += " d -f -s -m -k -o " + new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath() + "/apktool" + " " + argumentPackage.getApk().getAbsolutePath();
+        command += " d -f -s -m -k -o " + new File(Constants.TEMP_LIBRARY_FOLDER + "/apktool").getAbsolutePath() + " \"" + argumentPackage.getApk().getAbsolutePath() + "\"";
 
         workingDirectory = new File(Constants.APKTOOL_LIBRARY_FOLDER);
         executeCommand(DecompilerType.APKTOOL, command, workingDirectory);
@@ -112,7 +112,7 @@ public class Decompiler {
             command = "java -jar ./apktool-cli-all.jar";
         }
         //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-        command += " d -f --no-assets --no-res -m -o " + new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath() + "/apktool-smali" + " " + argumentPackage.getApk().getAbsolutePath();
+        command += " d -f --no-assets --no-res -m -o " + new File(Constants.TEMP_LIBRARY_FOLDER + "/apktool-smali").getAbsolutePath() + " \"" + argumentPackage.getApk().getAbsolutePath() + "\"";
 
         workingDirectory = new File(Constants.APKTOOL_LIBRARY_FOLDER);
         executeCommand(DecompilerType.APKTOOL, command, workingDirectory);
@@ -249,7 +249,7 @@ public class Decompiler {
                 } else {
                     command = "java -jar ./bin/app/jeb.jar";
                 }
-                command += " --srv2 --script=" + Constants.JEB3_CLI_ANDROID_SCRIPT_LIBRARY_FOLDER + "/DecompileAndroid.py -- " + argumentPackage.getApk().getAbsolutePath() + " " + new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath();
+                command += " --srv2 --script=" + new File(Constants.JEB3_CLI_ANDROID_SCRIPT_LIBRARY_FOLDER + "/DecompileAndroid.py").getAbsolutePath() + " -- " + argumentPackage.getApk().getAbsolutePath() + " " + new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath();
                 workingDirectory = argumentPackage.getJeb3Folder();
         }
         executeCommand(argumentPackage.getDecompilerType(), command, workingDirectory);

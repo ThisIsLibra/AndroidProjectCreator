@@ -159,9 +159,9 @@ public class ArgumentManager {
      * Display the version information
      */
     public void showVersion() {
-        String versionNumber = "1.2-stable";
+        String versionNumber = "1.2.2-stable";
         StringBuilder version = new StringBuilder();
-        version.append("[+]AndroidProjectCreator " + versionNumber + " [developed by Max 'Libra' Kersten <info@maxkersten.nl>]\n");
+        version.append("[+]AndroidProjectCreator " + versionNumber + " [developed by Max 'Libra' Kersten <info@maxkersten.nl> or @LibraAnalysis on Twitter]\n");
         System.out.println(version.toString());
     }
 }
