@@ -36,6 +36,47 @@ import java.util.UUID;
 public class Constants {
 
     /**
+     * Determines if the current operating system is Windows.
+     *
+     * @return true if the operating system is Windows, false if it is not.
+     */
+    public static boolean isWindows() {
+        //If the os.name property of the Dalvik VM contains "windows", the system is Windows based
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Determines if the current operating system is a Linux distribution.
+     *
+     * @return true if the operating system is a Linux distribution, false if it
+     * is not.
+     */
+    public static boolean isLinux() {
+        //If the os.name property of the Dalvik VM contains "linux", the system is a Linux distribution
+        if (System.getProperty("os.name").toLowerCase().contains("linux")) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Determines if the current operating system is a MacOS based operating
+     * system
+     *
+     * @return true if the host is running MacOS, false if not
+     */
+    public static boolean isMac() {
+        //If the os.name property of the Dalvik VM contains "mac os", the system is a MacOS distribution
+        if (System.getProperty("os.name").toLowerCase().contains("mac os")) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Obtain the base location of this instance of APC
      *
      * @return the folder in which the JAR resides

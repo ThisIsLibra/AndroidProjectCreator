@@ -39,11 +39,33 @@ public class ProjectInfos {
     public static List<ProjectInfo> getAll() {
         List<ProjectInfo> projectInfos = new ArrayList<>();
         projectInfos.add(getApkTool());
+        projectInfos.add(getCfr());
         projectInfos.add(getDex2Jar());
         projectInfos.add(getFernflower());
         projectInfos.add(getJadX());
         projectInfos.add(getJdCmd());
         return projectInfos;
+    }
+
+    /**
+     * Get the project information regarding Cfr
+     *
+     * @return Cfr project information
+     */
+    public static ProjectInfo getCfr() {
+        String compileCommand;
+        //The terminal commands in Windows differ from the ones on MacOS and Linux distributions
+        if (!Constants.isWindows()) {
+            compileCommand = "mvn clean package";
+        } else {
+            compileCommand = "mvn clean package";
+        }
+        File directory = new File(Constants.CFR_REPOSITORY_FOLDER);
+        //Set the information required to find the build, extract and copy it to the proper directory
+        Command buildCommand = new Command(compileCommand, directory); //Gradle project
+        File buildOutputFolder = new File(Constants.CFR_REPOSITORY_FOLDER + "/target");
+        String partialOutputName = "-SNAPSHOT.jar";
+        return new ProjectInfo(buildCommand, buildOutputFolder, partialOutputName);
     }
 
     /**
@@ -54,7 +76,7 @@ public class ProjectInfos {
     public static ProjectInfo getDex2Jar() {
         String compileCommand;
         //The terminal commands in Windows differ from the ones on MacOS and Linux distributions
-        if (!OperatingSystemDetector.isWindows()) {
+        if (!Constants.isWindows()) {
             compileCommand = "./gradlew clean distZip";
         } else {
             compileCommand = "gradlew.bat clean distZip";
@@ -75,7 +97,7 @@ public class ProjectInfos {
     public static ProjectInfo getJadX() {
         String compileCommand;
         //The terminal commands in Windows differ from the ones on MacOS and Linux distributions
-        if (!OperatingSystemDetector.isWindows()) {
+        if (!Constants.isWindows()) {
             compileCommand = "./gradlew dist";
         } else {
             compileCommand = "gradlew.bat dist";
@@ -95,7 +117,7 @@ public class ProjectInfos {
      */
     public static ProjectInfo getJdCmd() {
         String compileCommand;
-        if (!OperatingSystemDetector.isWindows()) {
+        if (!Constants.isWindows()) {
             compileCommand = "mvn package";
         } else {
             compileCommand = "mvn package";
@@ -114,7 +136,7 @@ public class ProjectInfos {
      */
     public static ProjectInfo getFernflower() {
         String compileCommand;
-        if (!OperatingSystemDetector.isWindows()) {
+        if (!Constants.isWindows()) {
             compileCommand = "./gradlew jar";
         } else {
             compileCommand = "gradlew.bat jar";
@@ -133,7 +155,7 @@ public class ProjectInfos {
      */
     public static ProjectInfo getApkTool() {
         String compileCommand;
-        if (!OperatingSystemDetector.isWindows()) {
+        if (!Constants.isWindows()) {
             compileCommand = "./gradlew build shadowJar";
         } else {
             compileCommand = "gradlew.bat build shadowJar";

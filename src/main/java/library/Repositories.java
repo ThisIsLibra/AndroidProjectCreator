@@ -86,7 +86,8 @@ public class Repositories {
      */
     public static Repository getJdCmd() {
         String name = DecompilerType.JDCMD.toString().toLowerCase();
-        String url = "https://github.com/kwart/jd-cmd.git";
+        //String url = "https://github.com/kwart/jd-cmd.git";
+        String url = "https://github.com/ThisIsLibra/jdcmd.git";
         File directory = new File(Constants.JDCMD_REPOSITORY_FOLDER);
         String branch = "master";
         return new Repository(name, url, directory, branch);
@@ -139,9 +140,9 @@ public class Repositories {
      */
     public static Repository getCfr() {
         String name = DecompilerType.CFR.toString().toLowerCase();
-        String url = "https://github.com/ThisIsLibra/cfr-decompiler.git";
+        String url = "https://github.com/leibnitz27/cfr.git";
         File directory = new File(Constants.CFR_REPOSITORY_FOLDER);
-        String branch = "apc-1.2";
+        String branch = "master";
         return new Repository(name, url, directory, branch);
     }
 

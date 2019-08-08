@@ -108,7 +108,7 @@ public class Tools {
      * @return the pre-built CFR decompiler tool object
      */
     private static Tool getCfr() {
-        return new Tool(Repositories.getCfr(), null);
+        return new Tool(Repositories.getCfr(), ProjectInfos.getCfr());
     }
 
     /**

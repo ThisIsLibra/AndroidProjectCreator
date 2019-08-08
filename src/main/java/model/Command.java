@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import library.OperatingSystemDetector;
+import library.Constants;
 
 /**
  * Execute a command line command on any platform (Windows, MacOS and Linux
@@ -65,7 +65,7 @@ public class Command {
     public void execute() throws IOException {
         try {
             String[] processName = new String[1];
-            if (OperatingSystemDetector.isWindows()) {
+            if (Constants.isWindows()) {
                 processName[0] = "cmd";
             } else {
                 processName[0] = "sh";

@@ -24,7 +24,6 @@ import enumeration.DecompilerType;
 import java.io.File;
 import java.io.IOException;
 import library.Constants;
-import library.OperatingSystemDetector;
 import model.ArgumentPackage;
 
 /**
@@ -135,7 +134,7 @@ public class ArgumentManager {
         usage.append("\t\t\tCFR, FERNFLOWER, JADX, JDCMD, JEB3 and PROCYON\n");
         usage.append("\t\tAdditionally, the location of the APK and the output location for the Android Project are required.\n");
         usage.append("\t\tSample usage to decompile an APK:\n");
-        if (OperatingSystemDetector.isWindows()) {
+        if (Constants.isWindows()) {
             usage.append("\t\t\t java -jar AndroidProjectCreator.jar -decompile FERNFLOWER path\\to\\the.apk output\\path\n");
         } else {
             usage.append("\t\t\tjava -jar ./AndroidProjectCreator.jar -decompile FERNFLOWER /path/to/the.apk /output/path/\n");
@@ -159,7 +158,7 @@ public class ArgumentManager {
      * Display the version information
      */
     public void showVersion() {
-        String versionNumber = "1.2.2-stable";
+        String versionNumber = "1.3-stable";
         StringBuilder version = new StringBuilder();
         version.append("[+]AndroidProjectCreator " + versionNumber + " [developed by Max 'Libra' Kersten <info@maxkersten.nl> or @LibraAnalysis on Twitter]\n");
         System.out.println(version.toString());

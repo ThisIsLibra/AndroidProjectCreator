@@ -19,7 +19,7 @@ package apc;
 import enumeration.Action;
 import enumeration.DecompilerType;
 import java.io.File;
-import library.OperatingSystemDetector;
+import library.Constants;
 import model.ArgumentPackage;
 
 /**
@@ -112,9 +112,9 @@ public class AndroidProjectCreator {
         args[0] = "-decompile";
         args[1] = decompiler.toString().toLowerCase();
         //Mac is excluded from the tests
-        if (OperatingSystemDetector.isLinux()) {
+        if (Constants.isLinux()) {
             args[2] = "/home/libra/Documents/apc-test/apk/challenge1_release.apk";
-        } else if (OperatingSystemDetector.isWindows()) {
+        } else if (Constants.isWindows()) {
             args[2] = "C:\\Users\\Libra\\Downloads\\ap k.apk";
         }
         args[3] = "./test-output-guid-" + java.util.UUID.randomUUID();

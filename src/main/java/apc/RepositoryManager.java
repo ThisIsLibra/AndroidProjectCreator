@@ -99,9 +99,9 @@ public class RepositoryManager {
         for (Tool tool : tools) {
             try {
                 if (tool.getRepository().getName().equalsIgnoreCase("androidproject")
-                        || tool.getRepository().getName().equalsIgnoreCase(DecompilerType.CFR.toString())
                         || tool.getRepository().getName().equalsIgnoreCase(DecompilerType.PROCYON.toString())
-                        || tool.getRepository().getName().equalsIgnoreCase(DecompilerType.JEB3.toString())) {
+                        || tool.getRepository().getName().equalsIgnoreCase(DecompilerType.JEB3.toString())
+                        || tool.getRepository().getName().equalsIgnoreCase(DecompilerType.JDCMD.toString())) {
                     continue;
                 }
                 System.out.println("[+]Starting to build " + tool.getRepository().getName());
@@ -145,13 +145,16 @@ public class RepositoryManager {
                     fileManager.copyFolder(new File(Constants.ANDROIDPROJECT_REPOSITORY_FOLDER), new File(Constants.ANDROIDPROJECT_LIBRARY_FOLDER));
                     continue;
                 } else if (tool.getRepository().getName().equalsIgnoreCase(DecompilerType.CFR.toString())) {
-                    fileManager.copyFolder(new File(Constants.CFR_REPOSITORY_FOLDER), new File(Constants.CFR_LIBRARY_FOLDER));
+                    fileManager.copyFolder(tool.getProjectInfo().getBuildOutputFolder(), new File(Constants.CFR_LIBRARY_FOLDER));
                     continue;
                 } else if (tool.getRepository().getName().equalsIgnoreCase(DecompilerType.PROCYON.toString())) {
                     fileManager.copyFolder(new File(Constants.PROCYON_REPOSITORY_FOLDER), new File(Constants.PROCYON_LIBRARY_FOLDER));
                     continue;
                 } else if (tool.getRepository().getName().equalsIgnoreCase(DecompilerType.JEB3.toString())) {
                     fileManager.copyFolder(new File(Constants.JEB3_CLI_ANDROID_SCRIPT_REPOSITORY_FOLDER), new File(Constants.JEB3_CLI_ANDROID_SCRIPT_LIBRARY_FOLDER));
+                    continue;
+                } else if (tool.getRepository().getName().equalsIgnoreCase(DecompilerType.JDCMD.toString())) {
+                    fileManager.copyFolder(new File(Constants.JDCMD_REPOSITORY_FOLDER), new File(Constants.JDCMD_LIBRARY_FOLDER));
                     continue;
                 }
                 System.out.println("[+]Extracting " + tool.getRepository().getName());

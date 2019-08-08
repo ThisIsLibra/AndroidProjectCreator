@@ -21,7 +21,7 @@ import enumeration.DecompilerType;
 import java.io.File;
 import java.io.IOException;
 import library.Constants;
-import library.OperatingSystemDetector;
+import library.ProjectInfos;
 import model.ArgumentPackage;
 import model.Command;
 import net.lingala.zip4j.exception.ZipException;
@@ -50,7 +50,7 @@ public class Decompiler {
      */
     public void decompile() throws IOException, InterruptedException, ZipException {
         //Declare local variables
-        boolean isWindows = OperatingSystemDetector.isWindows();
+        boolean isWindows = Constants.isWindows();
         String command;
         File workingDirectory;
 
@@ -200,6 +200,22 @@ public class Decompiler {
                 workingDirectory = new File(Constants.JDCMD_LIBRARY_FOLDER);
                 break;
             case CFR:
+                //The file name of the CFR decompiler JAR, which contains the version number
+                String cfrFileName = "";
+                //Get the folder where the build is located
+                File cfrLibraryFolder = new File(Constants.CFR_LIBRARY_FOLDER);
+                //Iterate through all files in the folder to find the correct JAR
+                for (File file : cfrLibraryFolder.listFiles()) {
+                    //Even though only files are listed, this measure is added as an additional security layer
+                    if (file.isDirectory()) {
+                        continue;
+                    }
+                    //If the name of the iterated file in the build output directory contains the partial output name of CFR, the name is taken
+                    //Both are in lower case to avoid errors when the casing is changed in the build output
+                    if (file.getName().toLowerCase().contains(ProjectInfos.getCfr().getPartialOutputName().toLowerCase())) {
+                        cfrFileName = file.getName();
+                    }
+                }
                 /**
                  * --outputdir [the output directory]
                  *
@@ -208,12 +224,12 @@ public class Decompiler {
                  *
                  */
                 if (isWindows) {
-                    command = "java -jar cfr-0.140.jar";
+                    command = "java -jar " + cfrFileName;
                 } else {
-                    command = "java -jar ./cfr-0.140.jar";
+                    command = "java -jar " + cfrFileName;
                 }
                 //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-                command += " --aexagg true --outputdir " + new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath() + " " + new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath();
+                command += " " + new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath() + " --aexagg true --outputdir " + new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath();
                 workingDirectory = new File(Constants.CFR_LIBRARY_FOLDER);
                 break;
             case PROCYON:
