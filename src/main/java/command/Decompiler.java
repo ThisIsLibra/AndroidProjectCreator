@@ -89,7 +89,7 @@ public class Decompiler {
             command = "java -jar ./apktool-cli-all.jar";
         }
         //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-        command += " d -f -s -m -k -o " + new File(Constants.TEMP_LIBRARY_FOLDER + "/apktool").getAbsolutePath() + " \"" + argumentPackage.getApk().getAbsolutePath() + "\"";
+        command += " d -f -s -m -k -o " + encapsulate(new File(Constants.TEMP_LIBRARY_FOLDER + "/apktool").getAbsolutePath()) + " " + encapsulate(argumentPackage.getApk().getAbsolutePath());
 
         workingDirectory = new File(Constants.APKTOOL_LIBRARY_FOLDER);
         executeCommand(DecompilerType.APKTOOL, command, workingDirectory);
@@ -112,7 +112,7 @@ public class Decompiler {
             command = "java -jar ./apktool-cli-all.jar";
         }
         //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-        command += " d -f --no-assets --no-res -m -o " + new File(Constants.TEMP_LIBRARY_FOLDER + "/apktool-smali").getAbsolutePath() + " \"" + argumentPackage.getApk().getAbsolutePath() + "\"";
+        command += " d -f --no-assets --no-res -m -o " + encapsulate(new File(Constants.TEMP_LIBRARY_FOLDER + "/apktool-smali").getAbsolutePath()) + " " + encapsulate(argumentPackage.getApk().getAbsolutePath());
 
         workingDirectory = new File(Constants.APKTOOL_LIBRARY_FOLDER);
         executeCommand(DecompilerType.APKTOOL, command, workingDirectory);
@@ -139,7 +139,7 @@ public class Decompiler {
             command = "sh ./d2j-dex2jar.sh";
         }
         //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-        command += " -n -f -o " + new File(Constants.TEMP_CONVERTED_JAR) + " " + new File(Constants.TEMP_LIBRARY_FOLDER + "/apktool/classes.dex").getAbsolutePath();
+        command += " -n -f -o " + encapsulate(new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath()) + " " + encapsulate(new File(Constants.TEMP_LIBRARY_FOLDER + "/apktool/classes.dex").getAbsolutePath());
         workingDirectory = new File(Constants.DEX2JAR_LIBRARY_FOLDER);
         executeCommand(DecompilerType.DEX2JAR, command, workingDirectory);
 
@@ -157,7 +157,7 @@ public class Decompiler {
                     command = "java -jar ./fernflower.jar";
                 }
                 //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-                command += " " + new File(Constants.TEMP_CONVERTED_JAR) + " " + new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath();
+                command += " " + encapsulate(new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath()) + " " + encapsulate(new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath());
                 workingDirectory = new File(Constants.FERNFLOWER_LIBRARY_FOLDER);
                 break;
             case JADX:
@@ -182,7 +182,7 @@ public class Decompiler {
                     command = "sh ./jadx";
                 }
                 //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-                command += " -r --escape-unicode -d " + new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath() + " " + new File(Constants.TEMP_CONVERTED_JAR);
+                command += " -r --escape-unicode -d " + encapsulate(new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath()) + " " + encapsulate(new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath());
                 workingDirectory = new File(Constants.JADX_LIBRARY_FOLDER);
                 break;
             case JDCMD:
@@ -196,7 +196,7 @@ public class Decompiler {
                     command = "java -jar ./jd-cli.jar";
                 }
                 //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-                command += " -od " + new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath() + " " + new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath();
+                command += " -od " + encapsulate(new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath()) + " " + encapsulate(new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath());
                 workingDirectory = new File(Constants.JDCMD_LIBRARY_FOLDER);
                 break;
             case CFR:
@@ -229,7 +229,7 @@ public class Decompiler {
                     command = "java -jar " + cfrFileName;
                 }
                 //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-                command += " " + new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath() + " --aexagg true --outputdir " + new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath();
+                command += " " + encapsulate(new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath()) + " --aexagg true --outputdir " + encapsulate(new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath());
                 workingDirectory = new File(Constants.CFR_LIBRARY_FOLDER);
                 break;
             case PROCYON:
@@ -247,7 +247,7 @@ public class Decompiler {
                     command = "java -jar ./procyon-decompiler-0.5.30.jar";
                 }
                 //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-                command += " -ci -eml --jar-file " + new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath() + " -o " + new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath();
+                command += " -ci -eml --jar-file " + encapsulate(new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath()) + " -o " + encapsulate(new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath());
                 workingDirectory = new File(Constants.PROCYON_LIBRARY_FOLDER);
                 break;
             case JEB3:
@@ -265,7 +265,7 @@ public class Decompiler {
                 } else {
                     command = "java -jar ./bin/app/jeb.jar";
                 }
-                command += " --srv2 --script=" + new File(Constants.JEB3_CLI_ANDROID_SCRIPT_LIBRARY_FOLDER + "/DecompileAndroid.py").getAbsolutePath() + " -- " + argumentPackage.getApk().getAbsolutePath() + " " + new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath();
+                command += " --srv2 --script=" + encapsulate(new File(Constants.JEB3_CLI_ANDROID_SCRIPT_LIBRARY_FOLDER + "/DecompileAndroid.py").getAbsolutePath()) + " -- " + encapsulate(argumentPackage.getApk().getAbsolutePath()) + " " + encapsulate(new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath());
                 workingDirectory = argumentPackage.getJeb3Folder();
         }
         executeCommand(argumentPackage.getDecompilerType(), command, workingDirectory);
@@ -311,5 +311,15 @@ public class Decompiler {
         } catch (IOException ex) {
             throw new IOException("Something went wrong with the I/O during the decompilation. Check the permissions of the output directory and try again.");
         }
+    }
+
+    /**
+     * Encapsulates the given string between quotes
+     *
+     * @param value the string to encapsulate
+     * @return the encapsulated string
+     */
+    private String encapsulate(String value) {
+        return "\"" + value + "\"";
     }
 }
