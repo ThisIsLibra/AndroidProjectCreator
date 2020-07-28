@@ -23,6 +23,7 @@ package enumeration;
  */
 public enum Action {
     INSTALL,
+    COMPACT_INSTALL,
     UPDATE,
     DECOMPILE,
     ERROR

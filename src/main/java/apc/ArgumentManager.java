@@ -17,6 +17,7 @@
 package apc;
 
 import command.Assembler;
+import command.CompactInstaller;
 import command.Installer;
 import command.Decompiler;
 import command.Updater;
@@ -63,6 +64,17 @@ public class ArgumentManager {
                     installer.install();
                     //Usage is shown after the installation has successfully been completed
                     showUsage();
+                    break;
+                case COMPACT_INSTALL:
+                    /**
+                     * Clones all tools into the library folder from a Github
+                     * repository that is occasionally updated. All tools on
+                     * that repository are precompiled, meaning one only has to
+                     * download the files, resulting in a compacter installation
+                     * in both disk space and time.
+                     */
+                    CompactInstaller compactInstaller = new CompactInstaller();
+                    compactInstaller.install();
                     break;
                 case UPDATE:
                     /**
@@ -126,6 +138,9 @@ public class ArgumentManager {
         for (DecompilerType decompilerType : DecompilerType.values()) {
             usage.append("\t\t\t" + decompilerType + "\n");
         }
+        usage.append("\t-compactInstall\n");
+        usage.append("\t\tDownloads precompiled instances of the tools that are listed at \"-install\" from a repository that is mainted by me.\n");
+        usage.append("\t\tThis is faster than installing it yourself, but the the \"-update\" will not work. Tools will also be a bit older.\n");
         usage.append("\t-update\n");
         usage.append("\t\tUpdating the library folder is equal to reinstalling the library using the -install function.\n");
         usage.append("\t-decompile\n");
@@ -158,7 +173,7 @@ public class ArgumentManager {
      * Display the version information
      */
     public void showVersion() {
-        String versionNumber = "1.3.1-stable";
+        String versionNumber = "1.4-stable";
         StringBuilder version = new StringBuilder();
         version.append("[+]AndroidProjectCreator " + versionNumber + " [developed by Max 'Libra' Kersten <info@maxkersten.nl> or @LibraAnalysis on Twitter]\n");
         System.out.println(version.toString());

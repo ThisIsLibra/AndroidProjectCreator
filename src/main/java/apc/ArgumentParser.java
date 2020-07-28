@@ -51,38 +51,19 @@ public class ArgumentParser {
     public ArgumentPackage setArguments(String[] args) {
         //Check if the amount of provided arguments equals one, which is also equal to the installation command. Note that both strings are converted to a lowercase variant.
         if (args.length == 1 && "-install".toLowerCase().equals(args[0].toLowerCase())) {
-            return parseInstall();
+            return new ArgumentPackage(Action.INSTALL);
             //Check if the update command is provided (if it is not the installation command).
         } else if (args.length == 1 && "-update".toLowerCase().equals(args[0].toLowerCase())) {
-            return parseUpdate();
+            return new ArgumentPackage(Action.UPDATE);
             //Check if the amount of arguments equals 4 or 5, of which the first equals to the decompile command.
         } else if ((args.length == 4 || args.length == 5) && "-decompile".toLowerCase().equals(args[0].toLowerCase())) {
             return parseDecompile(args);
+            //Check if the compact install argument is provided
+        } else if (args.length == 1 && "-compactInstall".toLowerCase().equals(args[0].toLowerCase())) {
+            return new ArgumentPackage(Action.COMPACT_INSTALL);
         }
         //Return error if something went wrong
         return new ArgumentPackage(Action.ERROR);
-    }
-
-    /**
-     * Obtain an argument package to install the tools
-     *
-     * @return the argument package which can be sent over to the argument
-     * manager
-     */
-    private ArgumentPackage parseInstall() {
-        ArgumentPackage argumentPackage = new ArgumentPackage(Action.INSTALL);
-        return argumentPackage;
-    }
-
-    /**
-     * Obtain an argument package to update the embedded tools
-     *
-     * @return the argument package which can be sent over to the argument
-     * manager
-     */
-    private ArgumentPackage parseUpdate() {
-        ArgumentPackage argumentPackage = new ArgumentPackage(Action.UPDATE);
-        return argumentPackage;
     }
 
     /**
