@@ -89,7 +89,7 @@ public class Repositories {
         //String url = "https://github.com/kwart/jd-cmd.git";
         String url = "https://github.com/ThisIsLibra/jdcmd.git";
         File directory = new File(Constants.JDCMD_REPOSITORY_FOLDER);
-        String branch = "master";
+        String branch = "main";
         return new Repository(name, url, directory, branch);
     }
 
@@ -129,7 +129,7 @@ public class Repositories {
         //String name = "androidstudioproject";
         String url = "https://github.com/ThisIsLibra/AndroidStudioProject.git";
         File directory = new File(Constants.ANDROIDPROJECT_REPOSITORY_FOLDER);
-        String branch = "master";
+        String branch = "main";
         return new Repository(name, url, directory, branch);
     }
 
@@ -168,7 +168,7 @@ public class Repositories {
         String name = DecompilerType.JEB3.toString().toLowerCase();
         String url = "https://github.com/ThisIsLibra/jeb3-cli-android-decompiler.git";
         File directory = new File(Constants.JEB3_CLI_ANDROID_SCRIPT_REPOSITORY_FOLDER);
-        String branch = "master";
+        String branch = "main";
         return new Repository(name, url, directory, branch);
     }
 }

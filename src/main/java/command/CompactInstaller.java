@@ -41,10 +41,10 @@ public class CompactInstaller {
         RepositoryManager repositoryManager = new RepositoryManager();
         System.out.println("[+]Starting cloning the repositories");
         List<Repository> repository = new ArrayList<>();
-        String name = "CompactInstall version 1.0 (dated 28-07-2020)";
+        String name = "CompactInstall version 1.1 (dated 11-05-2021)";
         String url = "https://github.com/thisislibra/apc-compact.git";
         File directory = new File(Constants.LIBRARY_FOLDER);
-        String branch = "28-07-2020";
+        String branch = "11-05-2021";
         repository.add(new Repository(name, url, directory, branch));
         repositoryManager.cloneRepositories(repository);
         System.out.println("[+]Cloning finished");

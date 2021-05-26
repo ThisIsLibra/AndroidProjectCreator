@@ -47,9 +47,9 @@ public class AndroidProjectCreator {
          */
         boolean debugging = false;
         if (debugging) {
-            //installTest();
+            installTest();
             //updateTest();
-            decompileTest(DecompilerType.FERNFLOWER);
+            //decompileTest(DecompilerType.FERNFLOWER);
             System.exit(0);
         }
 

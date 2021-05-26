@@ -120,28 +120,34 @@ public class Decompiler {
         //TODO before the combine functionality is added, add a temporary "copy all classes[n].dex files to the template project's assets folder" method
         //TODO Combine classes[N].dex files into classes.dex to decompile every part of the binary, should be optional since it can exceed 64k functions. Use /Users/[name]/Library/Android/sdk/build-tools/28.0.2/lib/dx.jar com.android.dx.merge.DexMerger output.dex part1.dex part2.dex
         //Source for code: https://stackoverflow.com/questions/11257378/is-there-a-way-to-merge-two-or-more-dex-files-into-one-dex-file-using-scala
-        //Convert the classes.dex to a JAR file for later use
         /**
-         * Convert the classes.dex to a JAR (use the "sh" in front since the
-         * script is not executable by default)
-         *
-         * The '-n' is used to ignore exceptions that are thrown by dex2jar
-         *
-         * The '-f' is used to forcefully overwrite existing files on the
-         * destination location
-         *
-         * The '-o' is used to define the output location
+         * JADX can decompile an APK directly, therefore its more efficient to
+         * skip this step if the JADX decompiler has been selected.
          */
-        if (isWindows) {
-            command = "d2j-dex2jar.bat";
-        } else {
-            //Add extra shell here to avoid the need to chmod +x the shell script
-            command = "sh ./d2j-dex2jar.sh";
+        if (argumentPackage.getDecompilerType().equals(DecompilerType.JADX) == false) {
+            //Convert the classes.dex to a JAR file for later use
+            /**
+             * Convert the classes.dex to a JAR (use the "sh" in front since the
+             * script is not executable by default)
+             *
+             * The '-n' is used to ignore exceptions that are thrown by dex2jar
+             *
+             * The '-f' is used to forcefully overwrite existing files on the
+             * destination location
+             *
+             * The '-o' is used to define the output location
+             */
+            if (isWindows) {
+                command = "d2j-dex2jar.bat";
+            } else {
+                //Add extra shell here to avoid the need to chmod +x the shell script
+                command = "sh ./d2j-dex2jar.sh";
+            }
+            //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
+            command += " -n -f -o " + encapsulate(new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath()) + " " + encapsulate(new File(Constants.TEMP_LIBRARY_FOLDER + "/apktool/classes.dex").getAbsolutePath());
+            workingDirectory = new File(Constants.DEX2JAR_LIBRARY_FOLDER);
+            executeCommand(DecompilerType.DEX2JAR, command, workingDirectory);
         }
-        //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-        command += " -n -f -o " + encapsulate(new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath()) + " " + encapsulate(new File(Constants.TEMP_LIBRARY_FOLDER + "/apktool/classes.dex").getAbsolutePath());
-        workingDirectory = new File(Constants.DEX2JAR_LIBRARY_FOLDER);
-        executeCommand(DecompilerType.DEX2JAR, command, workingDirectory);
 
         //Ensure that the output directory for the source code exists
         new File(Constants.TEMP_SOURCES_FOLDER).mkdir();
@@ -164,7 +170,7 @@ public class Decompiler {
                 /**
                  * -d sets output dir
                  *
-                 * -r avoids resources (got these with APKTool alraedy
+                 * -r avoids resources (got these with APKTool already)
                  *
                  * --escape-unicode to escape unicode characters
                  *
@@ -182,7 +188,7 @@ public class Decompiler {
                     command = "sh ./jadx";
                 }
                 //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
-                command += " -r --escape-unicode -d " + encapsulate(new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath()) + " " + encapsulate(new File(Constants.TEMP_CONVERTED_JAR).getAbsolutePath());
+                command += " -r --escape-unicode -d " + encapsulate(new File(Constants.TEMP_LIBRARY_FOLDER).getAbsolutePath()) + " " + encapsulate(argumentPackage.getApk().getAbsolutePath());
                 workingDirectory = new File(Constants.JADX_LIBRARY_FOLDER);
                 break;
             case JDCMD:
@@ -286,26 +292,43 @@ public class Decompiler {
      */
     private void executeCommand(DecompilerType name, String commandString, File workingDirectory) throws IOException, InterruptedException, ZipException {
         Command command = new Command(commandString, workingDirectory);
+        FileManager fileManager = new FileManager();
         System.out.println("[+]Decompling JAR with " + name);
         try {
             command.execute();
-            if (name.equals(DecompilerType.FERNFLOWER)) {
-                new FileManager().extractArchive(new File(Constants.TEMP_SOURCES_FOLDER + "/output.jar").getAbsolutePath(), new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath());
-                new FileManager().delete(new File(Constants.TEMP_SOURCES_FOLDER + "/output.jar"));
-            } else if (name.equals(DecompilerType.JEB3)) {
-                /**
-                 * If the JEB3 output folder exists, copy the contents to the
-                 * TEMP_SOURCES_FOLDER and remove the JEB3 output folder. This
-                 * way, the rest file handling can stay the same.
-                 */
-                File sourceLocation = new File(Constants.TEMP_SOURCES_FOLDER);
-                File jeb3Output = new File(sourceLocation.getAbsolutePath() + "/Bytecode_decompiled");
-                if (jeb3Output.exists() && jeb3Output.isDirectory()) {
-                    for (File currentFileObject : sourceLocation.listFiles()) {
-                        new FileManager().copyFolder(currentFileObject, sourceLocation);
+            switch (name) {
+                case FERNFLOWER:
+                    fileManager.extractArchive(new File(Constants.TEMP_SOURCES_FOLDER + "/output.jar").getAbsolutePath(), new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath());
+                    fileManager.delete(new File(Constants.TEMP_SOURCES_FOLDER + "/output.jar"));
+                    break;
+                case JEB3:
+                    /**
+                     * If the JEB3 output folder exists, copy the contents to
+                     * the TEMP_SOURCES_FOLDER and remove the JEB3 output
+                     * folder. This way, the rest file handling can stay the
+                     * same.
+                     */
+                    File sourceLocation = new File(Constants.TEMP_SOURCES_FOLDER);
+                    File jeb3Output = new File(sourceLocation.getAbsolutePath() + "/Bytecode_decompiled");
+                    if (jeb3Output.exists() && jeb3Output.isDirectory()) {
+                        for (File currentFileObject : sourceLocation.listFiles()) {
+                            fileManager.copyFolder(currentFileObject, sourceLocation);
+                        }
+                        fileManager.delete(jeb3Output);
                     }
-                    new FileManager().delete(jeb3Output);
-                }
+                    break;
+                case JADX:
+                    File source = new File(Constants.TEMP_SOURCES_FOLDER);
+                    File jadxOutput = new File(source.getAbsolutePath() + "/sources");
+                    if (jadxOutput.exists() && jadxOutput.isDirectory()) {
+                        for (File currentFileObject : source.listFiles()) {
+                            fileManager.copyFolder(currentFileObject, source);
+                        }
+                        fileManager.delete(jadxOutput);
+                    }
+                    break;
+                default:
+                    break;
             }
             System.out.println("[+]Decompilation finished");
         } catch (IOException ex) {
