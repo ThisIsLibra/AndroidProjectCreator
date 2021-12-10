@@ -173,7 +173,7 @@ public class ArgumentManager {
      * Display the version information
      */
     public void showVersion() {
-        String versionNumber = "1.5-stable";
+        String versionNumber = "1.5.1-stable";
         StringBuilder version = new StringBuilder();
         version.append("[+]AndroidProjectCreator " + versionNumber + " [developed by Max 'Libra' Kersten <info@maxkersten.nl> or @Libranalysis on Twitter]\n");
         System.out.println(version.toString());
