@@ -131,9 +131,8 @@ public class RepositoryManager {
      * <code>Constants.getLibraryFolderName()</code>
      *
      * @param tools the tools to be extracted
-     * @throws IOException if the build of a tool cannot be extracted or copied
      */
-    public void extractBuilds(List<Tool> tools) throws IOException {
+    public void extractBuilds(List<Tool> tools) {
         for (Tool tool : tools) {
             try {
                 /**
@@ -181,7 +180,8 @@ public class RepositoryManager {
                 System.out.println("[+]Finished extracting " + tool.getRepository().getName());
 
             } catch (IOException | ZipException ex) {
-                throw new IOException("Something went wrong during the extraction of the build of " + tool.getRepository().getName());
+                System.err.println("Something went wrong during the extraction of the build of " + tool.getRepository().getName() + ":\n" + ex.getMessage());
+                ex.printStackTrace();
             }
         }
     }
