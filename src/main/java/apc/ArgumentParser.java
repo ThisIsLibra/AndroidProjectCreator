@@ -50,6 +50,13 @@ public class ArgumentParser {
      */
     public ArgumentPackage setArguments(String[] args) {
         //Check if the amount of provided arguments equals one, which is also equal to the installation command. Note that both strings are converted to a lowercase variant.
+        ArgumentPackage INSTALL=checkInputArguments(args);
+        if(INSTALL!=null) return INSTALL;
+        //Return error if something went wrong
+        return new ArgumentPackage(Action.ERROR);
+    }
+
+    private ArgumentPackage checkInputArguments(String[] args){
         if (args.length == 1 && "-install".toLowerCase().equals(args[0].toLowerCase())) {
             return new ArgumentPackage(Action.INSTALL);
             //Check if the update command is provided (if it is not the installation command).
@@ -62,8 +69,7 @@ public class ArgumentParser {
         } else if (args.length == 1 && "-compactInstall".toLowerCase().equals(args[0].toLowerCase())) {
             return new ArgumentPackage(Action.COMPACT_INSTALL);
         }
-        //Return error if something went wrong
-        return new ArgumentPackage(Action.ERROR);
+        return null;
     }
 
     /**

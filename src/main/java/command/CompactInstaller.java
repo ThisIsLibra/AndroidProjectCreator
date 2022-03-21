@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
 import library.Constants;
 import model.Repository;
 
@@ -38,7 +40,7 @@ public class CompactInstaller {
      */
     public void install() throws IOException, InterruptedException, Exception {
         System.out.println("[+]Starting the installation");
-        RepositoryManager repositoryManager = new RepositoryManager();
+        AtomicReference<RepositoryManager> repositoryManager =new AtomicReference<>(new RepositoryManager());
         System.out.println("[+]Starting cloning the repositories");
         List<Repository> repository = new ArrayList<>();
         String name = "CompactInstall version 1.1 (dated 11-05-2021)";
@@ -46,10 +48,10 @@ public class CompactInstaller {
         File directory = new File(Constants.LIBRARY_FOLDER);
         String branch = "11-05-2021";
         repository.add(new Repository(name, url, directory, branch));
-        repositoryManager.cloneRepositories(repository);
+        repositoryManager.get().cloneRepositories(repository);
         System.out.println("[+]Cloning finished");
         System.out.println("[+]Verifying the toolset");
-        repositoryManager.verifyInstallation();
+        repositoryManager.get().verifyInstallation();
         System.out.println("[+]Verification succesful!");
         System.out.println("[+]Installation complete!");
     }
