@@ -7,8 +7,16 @@ import java.io.File;
 import java.io.IOException;
 
 public class ArchiveExtractor {
+    /**
+     * Works on both ZIP and APK archives
+     *
+     * @param source ZIP or APK file location
+     * @param destination place to extract all files to
+     * @throws ZipException if the file is not a ZIP archive
+     * @throws IOException if the source file cannot be found
+     */
     public static void extractArchive(String source,String destination) throws ZipException, IOException{
-        //Checke if the source folder exists
+        //Check if the source folder exists
         if (!new File(source).exists()) {
             throw new IOException("The source file does not exist");
         }

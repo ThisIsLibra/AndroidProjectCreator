@@ -30,14 +30,8 @@ import net.lingala.zip4j.exception.ZipException;
  */
 public class FileManager {
 
-    /**
-     * Works on both ZIP and APK archives
-     *
-     * @param source ZIP or APK file location
-     * @param destination place to extract all files to
-     * @throws ZipException if the file is not a ZIP archive
-     * @throws IOException if the source file cannot be found
-     */
+
+
     /**
      * Deletes a folder, including all sub directories.
      *

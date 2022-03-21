@@ -18,8 +18,11 @@ package command;
 
 import apc.RepositoryManager;
 import java.io.IOException;
+import java.util.List;
+
 import library.Repositories;
 import library.Tools;
+import model.Tool;
 
 /**
  * Handles the repositories to update and rebuild them
@@ -28,6 +31,8 @@ import library.Tools;
  */
 public class Updater {
 
+    List<Tool> tools=Tools.getTools();
+
     public void update() throws IOException, Exception {
         System.out.println("[+]Starting the update");
         RepositoryManager repositoryManager = new RepositoryManager();
@@ -35,13 +40,13 @@ public class Updater {
         repositoryManager.updateRepositories(Repositories.getAll());
         System.out.println("[+]Updating finished");
         System.out.println("[+]Starting to build all repositories");
-        repositoryManager.buildRepositories(Tools.getTools());
+        repositoryManager.buildRepositories(tools);
         System.out.println("[+]All projects have been built");
         System.out.println("[+]Removing tools from the library");
-        repositoryManager.emptyLibraryFolders(Tools.getTools());
+        repositoryManager.emptyLibraryFolders(tools);
         System.out.println("[+]Succesfully removed tools from the library");
         System.out.println("[+]Starting to extract the builds to the library");
-        repositoryManager.extractBuilds(Tools.getTools());
+        repositoryManager.extractBuilds(tools);
         System.out.println("[+]Extraction complete");
         System.out.println("[+]Verifying the toolset");
         repositoryManager.verifyInstallationUsingRequiredFolders();

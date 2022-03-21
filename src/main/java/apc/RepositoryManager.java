@@ -227,7 +227,7 @@ public class RepositoryManager {
         //Check each of the folders in the folders list
         for (File folder : folders) {
             //If it does not exist or is not a folder, then something went wrong
-            if (folder.exists() == false || folder.isDirectory() == false) {
+            if (!folder.exists()||!folder.isDirectory()) {
                 //Add the missing tool to the list
                 missingTools.add(folder.getName());
             }
