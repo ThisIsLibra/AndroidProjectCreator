@@ -51,7 +51,7 @@ public class CompactInstaller {
         repositoryManager.get().cloneRepositories(repository);
         System.out.println("[+]Cloning finished");
         System.out.println("[+]Verifying the toolset");
-        repositoryManager.get().verifyInstallation();
+        repositoryManager.get().verifyInstallationUsingRequiredFolders();
         System.out.println("[+]Verification succesful!");
         System.out.println("[+]Installation complete!");
     }

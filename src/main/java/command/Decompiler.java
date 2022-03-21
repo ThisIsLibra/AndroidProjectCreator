@@ -16,6 +16,7 @@
  */
 package command;
 
+import apc.ArchiveExtractor;
 import apc.FileManager;
 import enumeration.DecompilerType;
 import java.io.File;
@@ -298,7 +299,7 @@ public class Decompiler {
             command.execute();
             switch (name) {
                 case FERNFLOWER:
-                    fileManager.extractArchive(new File(Constants.TEMP_SOURCES_FOLDER + "/output.jar").getAbsolutePath(), new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath());
+                    ArchiveExtractor.extractArchive(new File(Constants.TEMP_SOURCES_FOLDER + "/output.jar").getAbsolutePath(), new File(Constants.TEMP_SOURCES_FOLDER).getAbsolutePath());
                     fileManager.delete(new File(Constants.TEMP_SOURCES_FOLDER + "/output.jar"));
                     break;
                 case JEB3:

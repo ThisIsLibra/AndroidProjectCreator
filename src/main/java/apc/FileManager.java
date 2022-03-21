@@ -38,20 +38,6 @@ public class FileManager {
      * @throws ZipException if the file is not a ZIP archive
      * @throws IOException if the source file cannot be found
      */
-    public void extractArchive(String source, String destination) throws ZipException, IOException {
-        //Checke if the source folder exists
-        if (!new File(source).exists()) {
-            throw new IOException("The source file does not exist");
-        }
-        try {
-            ZipFile zipFile = new ZipFile(source);
-            zipFile.extractAll(destination);
-        } catch (ZipException e) {
-            //A message is already provided
-            throw new ZipException(e.getMessage());
-        }
-    }
-
     /**
      * Deletes a folder, including all sub directories.
      *

@@ -44,7 +44,7 @@ public class Updater {
         repositoryManager.extractBuilds(Tools.getTools());
         System.out.println("[+]Extraction complete");
         System.out.println("[+]Verifying the toolset");
-        repositoryManager.verifyInstallation();
+        repositoryManager.verifyInstallationUsingRequiredFolders();
         System.out.println("[+]Verification succesful!");
         System.out.println("[+]Update complete!");
     }

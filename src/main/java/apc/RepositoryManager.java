@@ -166,7 +166,7 @@ public class RepositoryManager {
                         File outputLocation = new File(buildOutputFolder.getAbsolutePath() + "/" + Constants.BUILD_OUTPUT);
                         System.out.println("[+]Extracting to " + outputLocation.getAbsolutePath());
                         outputLocation.mkdir();
-                        fileManager.extractArchive(currentFile.getAbsolutePath(), outputLocation.getAbsolutePath());
+                        ArchiveExtractor.extractArchive(currentFile.getAbsolutePath(), outputLocation.getAbsolutePath());
                         //Copy extracted files to the lib folder, where only the builds reside
                         if (tool.getRepository().getName().equalsIgnoreCase(DecompilerType.DEX2JAR.toString())) {
                             fileManager.copyFolder(outputLocation.listFiles()[0], new File(Constants.DEX2JAR_LIBRARY_FOLDER));
@@ -196,7 +196,7 @@ public class RepositoryManager {
      *
      * @throws Exception if one or more tools fail to install
      */
-    public void verifyInstallation() throws Exception {
+    public void verifyInstallationUsingRequiredFolders() throws Exception {
         //Create a list in which all of the results go
         List<String> missingTools = new ArrayList<>();
 

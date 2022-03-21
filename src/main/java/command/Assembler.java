@@ -16,6 +16,7 @@
  */
 package command;
 
+import apc.ArchiveExtractor;
 import apc.FileManager;
 import java.io.File;
 import java.io.FileInputStream;
@@ -107,7 +108,7 @@ public class Assembler {
             File destinationFile = new File(Constants.TEMP_TEMPLATE_FOLDER);
             //Extract file
             System.out.println("[+]Extracting Android Studio template project");
-            fileManager.extractArchive(targetFile.getAbsolutePath(), destinationFile.getAbsolutePath());
+            ArchiveExtractor.extractArchive(targetFile.getAbsolutePath(), destinationFile.getAbsolutePath());
             System.out.println("[+]Template extraction finished");
         } catch (ZipException ex) {
             throw new ZipException("An error occurred when trying to extract the template project. Reinstall AndroidProjectCreator using the \"-install\" flag and try again.");
