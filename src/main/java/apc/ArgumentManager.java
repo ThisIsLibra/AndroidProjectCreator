@@ -18,7 +18,6 @@ package apc;
 
 import command.Assembler;
 import command.CompactInstaller;
-import command.Installer;
 import command.Decompiler;
 import command.Updater;
 import enumeration.DecompilerType;
@@ -60,8 +59,7 @@ public class ArgumentManager {
                      * Clone the repositories, build the projects and save them
                      * in the Constants.LIBRARY_FOLDER_NAME folder
                      */
-                    Installer installer = new Installer();
-                    installer.install();
+                    RepositoryManager.install();
                     //Usage is shown after the installation has successfully been completed
                     showUsage();
                     break;

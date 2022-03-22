@@ -30,8 +30,8 @@ import model.Tool;
  * @author Max 'Libra' Kersten
  */
 public class Updater {
-
     List<Tool> tools=Tools.getTools();
+
 
     public void update() throws IOException, Exception {
         System.out.println("[+]Starting the update");

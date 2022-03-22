@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import library.Constants;
+import library.Repositories;
+import library.Tools;
 import model.Repository;
 import model.Tool;
 import net.lingala.zip4j.exception.ZipException;
@@ -44,6 +46,33 @@ public class RepositoryManager {
      */
     public RepositoryManager() {
         fileManager = new FileManager();
+    }
+
+    /**
+     * Clones all the git repositories in a sub folder of
+     * <code>Constants.getLibraryFolderName()</code> (named "repos") in the
+     * current directory. Then, all projects are built to ensure the latest
+     * version is used. The outcome of the builds is either a ZIP or a JAR file.
+     * A ZIP file will first be extracted. The tools are then copied into the
+     * <code>Constants.getLibraryFolderName()</code> folder within their own
+     * subdirectory.
+     */
+    public static void install() throws IOException, Exception {
+        System.out.println("[+]Starting the installation");
+        RepositoryManager repositoryManager = new RepositoryManager();
+        System.out.println("[+]Starting cloning the repositories");
+        repositoryManager.cloneRepositories(Repositories.getAll());
+        System.out.println("[+]Cloning finished");
+        System.out.println("[+]Starting to build all repositories");
+        repositoryManager.buildRepositories(Tools.getTools());
+        System.out.println("[+]All projects have been built");
+        System.out.println("[+]Starting to extract the builds to the library");
+        repositoryManager.extractBuilds(Tools.getTools());
+        System.out.println("[+]Extraction complete");
+        System.out.println("[+]Verifying the toolset");
+        repositoryManager.verifyInstallationUsingRequiredFolders();
+        System.out.println("[+]Verification succesful!");
+        System.out.println("[+]Installation complete!");
     }
 
     /**
