@@ -36,7 +36,7 @@ import net.lingala.zip4j.exception.ZipException;
 public class Decompiler {
 
     private final ArgumentPackage argumentPackage;
-
+    File workingDirectory=new File(Constants.APKTOOL_LIBRARY_FOLDER);
     public Decompiler(ArgumentPackage argumentPackage) {
         this.argumentPackage = argumentPackage;
     }
@@ -53,7 +53,6 @@ public class Decompiler {
         //Declare local variables
         boolean isWindows = Constants.isWindows();
         String command;
-        File workingDirectory;
 
         //Decode the APK with APKTool
         File apkOutput = new File(Constants.TEMP_LIBRARY_FOLDER);
@@ -92,7 +91,7 @@ public class Decompiler {
         //Append the flags and the file paths to the commands. These are the same on any platform due to the Java runtime
         command += " d -f -s -m -k -o " + encapsulate(new File(Constants.TEMP_LIBRARY_FOLDER + "/apktool").getAbsolutePath()) + " " + encapsulate(argumentPackage.getApk().getAbsolutePath());
 
-        workingDirectory = new File(Constants.APKTOOL_LIBRARY_FOLDER);
+
         executeCommand(DecompilerType.APKTOOL, command, workingDirectory);
 
         /**
