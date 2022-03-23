@@ -35,10 +35,6 @@ import net.lingala.zip4j.exception.ZipException;
  */
 public class RepositoryManager {
 
-    /**
-     * The file manager that is used within this class
-     */
-    private FileManager fileManager;
 
     /**
      * This class handles everything regarding repositories, such as cloning and
@@ -47,7 +43,10 @@ public class RepositoryManager {
     public RepositoryManager() {
         fileManager = new FileManager();
     }
-
+    /**
+     * The file manager that is used within this class
+     */
+    private FileManager fileManager;
     /**
      * Clones all the git repositories in a sub folder of
      * <code>Constants.getLibraryFolderName()</code> (named "repos") in the
@@ -82,6 +81,10 @@ public class RepositoryManager {
      * @throws IOException when the repository cannot be removed
      */
     public void removeRepositoryFolder() throws IOException {
+        /**
+         * The file manager that is used within this class
+         */
+        FileManager fileManager=new FileManager();
         File reposDirectory = new File(Constants.REPOSITORY_FOLDER);
         if (reposDirectory.exists() && reposDirectory.isDirectory()) {
             fileManager.delete(reposDirectory);
@@ -150,6 +153,10 @@ public class RepositoryManager {
      * @throws IOException is an IO error occurs
      */
     public void emptyLibraryFolders(List<Tool> tools) throws IOException {
+        /**
+         * The file manager that is used within this class
+         */
+        FileManager fileManager=new FileManager();
         for (Tool tool : tools) {
             fileManager.emptyFolder(new File(Constants.LIBRARY_FOLDER + "/" + tool.getRepository().getName()));
         }
@@ -162,6 +169,10 @@ public class RepositoryManager {
      * @param tools the tools to be extracted
      */
     public void extractBuilds(List<Tool> tools) {
+        /**
+         * The file manager that is used within this class
+         */
+        FileManager fileManager=new FileManager();
         for (Tool tool : tools) {
             try {
                 /**
