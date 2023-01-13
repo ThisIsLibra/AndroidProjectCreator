@@ -179,10 +179,11 @@ public class RepositoryManager {
                 }
                 System.out.println("[+]Finished extracting " + tool.getRepository().getName());
 
-            } catch (IOException | ZipException ex) {
+            } catch (ZipException ex) { }
+              catch (IOException ex) {
                 System.err.println("Something went wrong during the extraction of the build of " + tool.getRepository().getName() + ":\n" + ex.getMessage());
                 ex.printStackTrace();
-            }
+                }
         }
     }
 
