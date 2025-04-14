@@ -94,7 +94,7 @@ public class Repository {
 
         } catch (GitAPIException ex) {
             //Because the GitAPIException is abstract and cannot be instantiated, another (similar) exception is used
-            throw new IOException("[+]There was an error cloing " + name + ". Verify your internet connection and the permissions of the folder!");
+            throw new IOException("[+]There was an error cloning " + name + ". Verify your internet connection and the permissions of the folder!");
         }
     }
 
